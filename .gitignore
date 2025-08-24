@@ -3,3 +3,7 @@ build/*
 dist/*
 
 src/niebla.egg-info/*
+
+*.xml
+*.iml
+

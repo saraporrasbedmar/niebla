@@ -1,10 +1,10 @@
 import numpy as np
 
 
-def calculate_dust(wv_array, z_array=0.,
-                   models=None,
-                   dust_params=None,
-                   verbose=False):
+def dust_abs_fraction(wv_array, z_array=0.,
+                      models=None,
+                      dust_params=None,
+                      verbose=False):
     """
     Function to calculate the fraction of photons which will escape
     absorption by dust. Dependencies both with wavelength and redshift,
@@ -289,7 +289,7 @@ def dust_att_finke(lambda_array, params_dust=None, verbose=True):
             * (np.log10(lambda_array) - np.log10(lambda_steps_fn22[4])))
            * (lambda_array > lambda_steps_fn22[3]))
 
-    yy[yy<1e-43] = 1e-43
+    yy[yy < 1e-43] = 1e-43
     return np.log10(yy)
 
 

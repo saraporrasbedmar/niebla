@@ -167,15 +167,19 @@ ssp_models:
         - 5.89
     dust_reem: true
     dust_reem_params:
-      library: three_grey_body
-      T:
-        - 70.
-        - 450.
-        - 70.
-      fracts:
-        - 0.6
-        - 0.2
-    metall_formula: 'tanikawa22'
+      library: chary2001
+      file_path: 'src/niebla/data/ssp_synthetic_spectra/chary2001/chary_elbaz.fits'
+      f_tir: 9.68  # [dex]
+      wv_reem_min: 5.33  # [microns]
+#      library: three_grey_body
+#      T:
+#        - 70.
+#        - 450.
+#        - 70.
+#      fracts:
+#        - 0.6
+#        - 0.2
+    metall_formula: 'metall_tanikawa22'
     metall_params:
       - -1.363077660454558e-06
       - 0.1709136894779165
@@ -191,7 +195,7 @@ ssp_models:
     ssp:
       file_name: /kroupa_
       ignore_rows: 6
-      path_ssp: data/ssp_synthetic_spectra/starburst99/kroupa_padova/
+      path_ssp: src/niebla/data/ssp_synthetic_spectra/starburst99/kroupa_padova/
       ssp_type: SB99
       total_stellar_mass: 6
       L_lambda: True

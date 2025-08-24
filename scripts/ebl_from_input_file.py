@@ -6,7 +6,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 # from scipy.interpolate import UnivariateSpline, RegularGridInterpolator
 
+import sys
+print(sys.path)
+sys.path.append('/home/saraporras/PycharmProjects/niebla/src/niebla/')
+print(sys.path)
+
 from niebla import ebl_model
+
+print(os.listdir())
 
 from astropy.constants import c
 
@@ -377,7 +384,7 @@ for nkey, key in enumerate(config_data['ssp_models']):
                 color_dustabs.append(plt.cm.CMRmap(ni / float(len(zz_dustabs))))
 
                 plt.plot(wv_dustabs,
-                         ebl_model.calculate_dust(
+                         ebl_model.dust_abs_fraction(
                              wv_array=wv_dustabs,
                              models=config_data['ssp_models'][key][
                                  'dust_abs_models'],
@@ -391,7 +398,7 @@ for nkey, key in enumerate(config_data['ssp_models']):
             else:
                 color_dustabs.append(plt.cm.CMRmap(ni / float(len(zz_dustabs))))
                 plt.plot(wv_dustabs,
-                         ebl_model.calculate_dust(
+                         ebl_model.dust_abs_fraction(
                              wv_array=wv_dustabs,
                              models=config_data['ssp_models'][key][
                                  'dust_abs_models'],

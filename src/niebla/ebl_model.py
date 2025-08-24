@@ -16,7 +16,7 @@ from astropy.cosmology import FlatLambdaCDM
 
 from niebla.sfr_models import sfr_model
 from niebla.metall_models import metall_model
-from niebla import dust_absorption_models as dust_abs_model
+from niebla.dust_absorption_models import dust_abs_fraction
 
 try:
     from hmf import MassFunction
@@ -554,7 +554,7 @@ class EBL_model(object):
             self.logging_info('SSP emissivity: set the initial kernel')
 
         # Dust absorption (applied in log10)
-        fract_dust_Notabs = dust_abs_model.calculate_dust(
+        fract_dust_Notabs = dust_abs_fraction(
             wv_array=self._lambda_array,
             models=yaml_data['dust_abs_models'],
             z_array=np.squeeze(self._z_array),
@@ -647,7 +647,7 @@ class EBL_model(object):
                     )
                 else:
                     norm_shape_reem += (
-                    array_fract#[nn]
+                    array_fract[nn]
                     * bb_plank(tt))
 
 

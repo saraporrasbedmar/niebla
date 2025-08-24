@@ -1,6 +1,6 @@
 [project]
 name = "niebla"
-version = "0.0.1"
+version = "0.0.4"
 authors = [
   { name="Sara Porras Bedmar", email="saraporrasbedmar@gmail.com" },
 ]
@@ -11,9 +11,14 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
-license = "MIT"
-license-files = ["LICEN[CS]E*"]
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+dynamic = ["dependencies", "keywords"]
 
 [project.urls]
-Homepage = "https://github.com/pypa/sampleproject"
-Issues = "https://github.com/pypa/sampleproject/issues"
+Homepage = "https://github.com/saraporrasbedmar/niebla"
+Issues = "https://github.com/saraporrasbedmar/niebla/issues"
+
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"

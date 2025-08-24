@@ -1,21 +1,21 @@
 # IMPORTS --------------------------------------------#
 import os
 import yaml
-import psutil
+# import psutil
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.interpolate import UnivariateSpline, RegularGridInterpolator
+# from scipy.interpolate import UnivariateSpline, RegularGridInterpolator
 
-import niebla
+from niebla import ebl_model
 
 from astropy.constants import c
 
-from data.cb_measurs.import_cb_measurs import import_cb_data
-from data.emissivity_measurs.emissivity_read_data import emissivity_data
-from data.sfr_measurs.sfr_read import *
-from data.metallicity_measurs.import_metall import import_met_data
+# from data.cb_measurs.import_cb_measurs import import_cb_data
+# from data.emissivity_measurs.emissivity_read_data import emissivity_data
+# from data.sfr_measurs.sfr_read import *
+# from data.metallicity_measurs.import_metall import import_met_data
 
-from ebltable.ebl_from_model import EBL
+# from ebltable.ebl_from_model import EBL
 
 plt.rcParams['mathtext.fontset'] = 'stix'
 plt.rcParams['font.family'] = 'STIXGeneral'
@@ -34,22 +34,22 @@ plt.rc('ytick.major', size=7, width=1.5, right=True, pad=5)
 plt.rc('xtick.minor', size=4, width=1)
 plt.rc('ytick.minor', size=4, width=1)
 
-# input_file_dir = ('outputs/outputs_dust_final_new/')
-input_file_dir = 'notebooks/'
-
 # Check that the working directory is correct for the paths
 if os.path.basename(os.getcwd()) == 'scripts':
     os.chdir("..")
+
+# input_file_dir = ('outputs/outputs_dust_final_new/')
+input_file_dir = 'notebooks/'
 
 # If the directory for outputs is not present, create it.
 if not os.path.exists("outputs/"):
     os.makedirs("outputs/")
 
-def memory_usage_psutil():
-    # return the memory usage in MB
-    process = psutil.Process(os.getpid())
-    mem = process.memory_info()[0] / float(10 ** 6)
-    return mem
+# def memory_usage_psutil():
+#     # return the memory usage in MB
+#     process = psutil.Process(os.getpid())
+#     mem = process.memory_info()[0] / float(10 ** 6)
+#     return mem
 
 # Configuration file reading and data input/output ---------#
 def read_config_file(ConfigFile):
@@ -70,16 +70,15 @@ linstyles_ssp = ['solid', '--', 'dotted', '-.', (0, (3, 5, 1, 5, 1, 5))]
 
 markers = ['.', 'x', '+', '*', '^', '>', '<']
 
-
 # We initialize the class with the input file
-config_data = read_config_file(input_file_dir + 'input_data.yml')
-ebl_class = niebla.EBL_model.input_yaml_data_into_class(
+config_data = read_config_file(input_file_dir + 'input_example.yml')
+ebl_class = ebl_model.EBL_model.input_yaml_data_into_class(
     config_data, log_prints=True)
 
 # FIGURE: METALLICITIES FOR DIFFERENT MODELS ---------------------------
 fig_met, ax_met = plt.subplots(figsize=(8, 8))
 plt.yscale('log')
-aa = import_met_data(ax=ax_met)
+# aa = import_met_data(ax=ax_met)
 # aa = import_met_data(ax=ax_met, z_sun=0.014)
 
 plt.xlabel('redshift z')
@@ -123,12 +122,12 @@ plt.axvline(2.47968397/config_data['axion_params']['axion_mass'])
 # linestyle=models[2], color='k')
 plt.figure()
 
-emiss_data = emissivity_data(z_min=None, z_max=None,
-                    lambda_min=0., lambda_max=3e3,
-                    take1ref=None, plot_fig=False)
-plt.scatter(x=emiss_data['lambda'], y=emiss_data['z'],
-            c=np.log10(emiss_data['eje']),
-            cmap='viridis')
+# emiss_data = emissivity_data(z_min=None, z_max=None,
+#                     lambda_min=0., lambda_max=3e3,
+#                     take1ref=None, plot_fig=False)
+# plt.scatter(x=emiss_data['lambda'], y=emiss_data['z'],
+#             c=np.log10(emiss_data['eje']),
+#             cmap='viridis')
 
 plt.xscale('log')
 plt.yscale('log')
@@ -136,11 +135,11 @@ plt.yscale('log')
 fig_emiss_lambda, (ax_emiss_lambda0, ax_emiss_lambda1) = plt.subplots(
     2, 1, figsize=(10, 14))
 plt.subplot(211)
-for nz, zz in enumerate(np.unique(emiss_data['z'])):
-    ax_emiss_lambda0.scatter(x=emiss_data['lambda'][emiss_data['z'] == zz],
-                y=emiss_data['eje'][emiss_data['z'] == zz],
-            color=plt.cm.CMRmap(nz / float(len(np.unique(emiss_data['z'])))),
-                )
+# for nz, zz in enumerate(np.unique(emiss_data['z'])):
+#     ax_emiss_lambda0.scatter(x=emiss_data['lambda'][emiss_data['z'] == zz],
+#                 y=emiss_data['eje'][emiss_data['z'] == zz],
+#             color=plt.cm.CMRmap(nz / float(len(np.unique(emiss_data['z'])))),
+#                 )
 
 ax_emiss_lambda0.set_xscale('log')
 ax_emiss_lambda0.set_yscale('log')
@@ -171,9 +170,9 @@ for n_lambda, ll in enumerate([0.15, 0.17, 0.28,
                                1.22, 2.2, 3.6,
                                4.5, 5.8, 8.0]):
     plt.subplot(4, 3, n_lambda + 1)
-    emissivity_data(z_min=None, z_max=None,
-                    lambda_min=ll - 0.05, lambda_max=ll + 0.05,
-                    take1ref=None, plot_fig=True)
+    # emissivity_data(z_min=None, z_max=None,
+    #                 lambda_min=ll - 0.05, lambda_max=ll + 0.05,
+    #                 take1ref=None, plot_fig=True)
 
     # if n_lambda != 8:
     plt.annotate(r'%r$\,\mu m$' % ll, xy=(5, 1e35), fontsize=28)
@@ -221,8 +220,8 @@ z_data = np.linspace(float(config_data['redshift_array']['z_min']),
                      float(config_data['redshift_array']['z_max']),
                      num=500)
 
-sfr_data = sfr_data_dict()
-plot_sfr_data(sfr_data)
+# sfr_data = sfr_data_dict()
+# plot_sfr_data(sfr_data)
 
 plt.yscale('log')
 plt.ylabel('sfr(z)')
@@ -253,7 +252,7 @@ wv_dustabs = np.logspace(-2, 1, num=5000)
 zz_dustabs = np.array([0, 2, 4, 6])
 color_dustabs = []
 
-print('%.3f' %(memory_usage_psutil()))
+# print('%.3f' %(memory_usage_psutil()))
 # ebl_class.logging_prints = False
 
 # SSPs component calculation (all models listed in the input file)
@@ -266,7 +265,7 @@ for nkey, key in enumerate(config_data['ssp_models']):
 
     print(ebl_class.ebl_ssp_spline(0.608, 0.),
           21.98 - ebl_class.ebl_ssp_spline(0.608, 0.))
-    print('%.3f' % (memory_usage_psutil()))
+    # print('%.3f' % (memory_usage_psutil()))
 
 
     ax_cob.plot(waves_ebl, ebl_class.ebl_ssp_spline(
@@ -279,29 +278,29 @@ for nkey, key in enumerate(config_data['ssp_models']):
 
 
 
-    plt.figure(fig_emiss_lambda)
-    for nz, zz in enumerate(np.unique(emiss_data['z'])):
-        plt.subplot(211)
-        ax_emiss_lambda0.plot(waves_ebl, ebl_class.emiss_ssp_spline(
-                     waves_ebl, zz) * freq_array_ebl * 1e-7,
-                    color=plt.cm.CMRmap(
-                        nz / float(len(np.unique(emiss_data['z'])))),
-                    zorder=0, alpha=0.75, ls=linstyles_ssp[nkey])
-        freq_arr_emiss = (3e8*1e6/emiss_data['lambda'][emiss_data['z'] == zz])
-
-        plt.subplot(212)
-        plt.plot(
-            emiss_data['lambda'][emiss_data['z'] == zz],
-            (ebl_class.emiss_ssp_spline(
-                emiss_data['lambda'][emiss_data['z'] == zz], zz)
-               * freq_arr_emiss * 1e-7
-               - emiss_data['eje'][emiss_data['z'] == zz])
-              / ((emiss_data['eje_n'][emiss_data['z'] == zz]
-                  + emiss_data['eje_p'][emiss_data['z'] == zz]) / 2.),
-                    color=plt.cm.CMRmap(
-                        nz / float(len(np.unique(emiss_data['z'])))),
-            ls='', marker=markers[nkey]
-                    )
+    # plt.figure(fig_emiss_lambda)
+    # for nz, zz in enumerate(np.unique(emiss_data['z'])):
+    #     plt.subplot(211)
+    #     ax_emiss_lambda0.plot(waves_ebl, ebl_class.emiss_ssp_spline(
+    #                  waves_ebl, zz) * freq_array_ebl * 1e-7,
+    #                 color=plt.cm.CMRmap(
+    #                     nz / float(len(np.unique(emiss_data['z'])))),
+    #                 zorder=0, alpha=0.75, ls=linstyles_ssp[nkey])
+    #     freq_arr_emiss = (3e8*1e6/emiss_data['lambda'][emiss_data['z'] == zz])
+    #
+    #     plt.subplot(212)
+    #     plt.plot(
+    #         emiss_data['lambda'][emiss_data['z'] == zz],
+    #         (ebl_class.emiss_ssp_spline(
+    #             emiss_data['lambda'][emiss_data['z'] == zz], zz)
+    #            * freq_arr_emiss * 1e-7
+    #            - emiss_data['eje'][emiss_data['z'] == zz])
+    #           / ((emiss_data['eje_n'][emiss_data['z'] == zz]
+    #               + emiss_data['eje_p'][emiss_data['z'] == zz]) / 2.),
+    #                 color=plt.cm.CMRmap(
+    #                     nz / float(len(np.unique(emiss_data['z'])))),
+    #         ls='', marker=markers[nkey]
+    #                 )
 
     plt.figure(fig_emiss_z)
     for n_lambda, ll in enumerate([0.15, 0.17, 0.28,
@@ -325,7 +324,7 @@ for nkey, key in enumerate(config_data['ssp_models']):
                                     color=colors[nkey % len(colors)]))
 
     ax_met.plot(z_array,
-                niebla.metall_model(
+                ebl_model.metall_model(
                     zz_array=z_array,
                     metall_model=config_data['ssp_models'][key]['metall_formula'],
                     metall_params=config_data['ssp_models'][key]['metall_params']
@@ -333,7 +332,7 @@ for nkey, key in enumerate(config_data['ssp_models']):
                 label=config_data['ssp_models'][key]['name'],
                 color=colors[nkey % len(colors)])
 
-    ax_sfr.plot(z_data, niebla.sfr_model(
+    ax_sfr.plot(z_data, ebl_model.sfr_model(
         zz_array=z_data,
         sfr_model=config_data['ssp_models'][key]['sfr_formula'],
         sfr_params=config_data['ssp_models'][key]['sfr_params']),
@@ -378,7 +377,7 @@ for nkey, key in enumerate(config_data['ssp_models']):
                 color_dustabs.append(plt.cm.CMRmap(ni / float(len(zz_dustabs))))
 
                 plt.plot(wv_dustabs,
-                         niebla.calculate_dust(
+                         ebl_model.calculate_dust(
                              wv_array=wv_dustabs,
                              models=config_data['ssp_models'][key][
                                  'dust_abs_models'],
@@ -392,7 +391,7 @@ for nkey, key in enumerate(config_data['ssp_models']):
             else:
                 color_dustabs.append(plt.cm.CMRmap(ni / float(len(zz_dustabs))))
                 plt.plot(wv_dustabs,
-                         niebla.calculate_dust(
+                         ebl_model.calculate_dust(
                              wv_array=wv_dustabs,
                              models=config_data['ssp_models'][key][
                                  'dust_abs_models'],
@@ -404,23 +403,23 @@ for nkey, key in enumerate(config_data['ssp_models']):
                          alpha=1)
 
 
-print('%.3f' %(memory_usage_psutil()))
+# print('%.3f' %(memory_usage_psutil()))
 plt.figure(fig_cob)
-import_cb_data(plot_measurs=True, ax1=ax_cob, lambda_max_total=1000)
+# import_cb_data(plot_measurs=True, ax1=ax_cob, lambda_max_total=1000)
 
 # We introduce the Finke22 and CUBA splines
-ebl = {}
-for m in EBL.get_models():
-    ebl[m] = EBL.readmodel(m)
-nuInu = {}
-for m, e in ebl.items():
-    nuInu[m] = e.ebl_array(np.array([0.]), waves_ebl)
-spline_finke = UnivariateSpline(waves_ebl, nuInu['finke2022'], s=0, k=1)
-spline_cuba = UnivariateSpline(waves_ebl, nuInu['cuba'], s=0, k=1)
-ax_cob.plot(waves_ebl, spline_finke(waves_ebl),
-            c='orange', label='Finke22 model A')
-ax_cob.plot(waves_ebl, spline_cuba(waves_ebl),
-            c='fuchsia', label='CUBA')
+# ebl = {}
+# for m in EBL.get_models():
+#     ebl[m] = EBL.readmodel(m)
+# nuInu = {}
+# for m, e in ebl.items():
+#     nuInu[m] = e.ebl_array(np.array([0.]), waves_ebl)
+# spline_finke = UnivariateSpline(waves_ebl, nuInu['finke2022'], s=0, k=1)
+# spline_cuba = UnivariateSpline(waves_ebl, nuInu['cuba'], s=0, k=1)
+# ax_cob.plot(waves_ebl, spline_finke(waves_ebl),
+#             c='orange', label='Finke22 model A')
+# ax_cob.plot(waves_ebl, spline_cuba(waves_ebl),
+#             c='fuchsia', label='CUBA')
 
 
 plt.yscale('log')

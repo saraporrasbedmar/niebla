@@ -18,9 +18,12 @@ virtual enviroment, I would not reccomend to get stuck trying to
 implement it if it is not needed:
     - hmf
 
-Installation: TODO
+Installation:
 ------------
 
+You can use pip to install the package:: 
+
+    pip install niebla
 
 Example scripts and notebooks are provided on the github page in the
 scripts/ and notebooks/ folder, https://github.com/

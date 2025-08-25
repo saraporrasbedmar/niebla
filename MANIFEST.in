@@ -1,1 +1,1 @@
-recursive-include niebla/data *
+recursive-include src/niebla/data *

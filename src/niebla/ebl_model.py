@@ -414,7 +414,9 @@ class EBL_model(object):
 
     def spline_dust_reemission(self, yaml_data):
         """
-
+        Provide the spline of dust reemission, assuming either BOSA
+        or Chary2001 templates are being used. For other templates,
+        please upload them manually.
         :param yaml_data:
         :return:
         """

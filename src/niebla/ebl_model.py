@@ -417,7 +417,8 @@ class EBL_model(object):
         Provide the spline of dust reemission, assuming either BOSA
         or Chary2001 templates are being used. For other templates,
         please upload them manually.
-        :param yaml_data:
+        :param yaml_data: dictionary
+        Tells which templates to use.
         :return:
         """
 

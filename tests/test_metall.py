@@ -2,7 +2,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
-import niebla.metall_models as metall
+import src.niebla.metall_models as metall
 
 
 def test_metall_tanikawa22():

@@ -8,8 +8,9 @@ import matplotlib.pyplot as plt
 
 from astropy.constants import c
 
+from src.niebla import ebl_model
 
-from niebla import ebl_model
+# from niebla import ebl_model
 
 # from data.cb_measurs.import_cb_measurs import import_cb_data
 # from data.emissivity_measurs.emissivity_read_data import emissivity_data
@@ -45,6 +46,7 @@ input_file_dir = 'notebooks/'
 # If the directory for outputs is not present, create it.
 if not os.path.exists("outputs/"):
     os.makedirs("outputs/")
+
 
 # def memory_usage_psutil():
 #     # return the memory usage in MB
@@ -91,17 +93,15 @@ fig_cob, ax_cob = plt.subplots(figsize=(10, 8))
 waves_ebl = np.logspace(-1, 3, num=205)
 freq_array_ebl = c.value / (waves_ebl * 1e-6)
 
-
 # Axion component calculation
 
 wv_alp, int_alp = ebl_class.ebl_axion_calculation(
     wavelength=waves_ebl, zz_array=0.,
     axion_mass=float(config_data['axion_params']['axion_mass']),
     axion_gayy=float(config_data['axion_params']['axion_gamma'])
-    )
+)
 plt.loglog(wv_alp, int_alp,
-         linestyle=models[3], color='k', marker='.')
-
+           linestyle=models[3], color='k', marker='.')
 
 wv_alp, int_alp = ebl_class.ebl_axion_calculation(
     wavelength=waves_ebl, zz_array=0.,
@@ -109,9 +109,9 @@ wv_alp, int_alp = ebl_class.ebl_axion_calculation(
     axion_gayy=float(config_data['axion_params']['axion_gamma']),
     factor=0.5)
 plt.loglog(wv_alp, int_alp,
-         linestyle=models[3], color='r', marker='.')
+           linestyle=models[3], color='r', marker='.')
 
-plt.axvline(2.47968397/config_data['axion_params']['axion_mass'])
+plt.axvline(2.47968397 / config_data['axion_params']['axion_mass'])
 # plt.show()
 # Intrahalo component calculation
 # ebl_class.ebl_intrahalo_calculation(float(
@@ -159,7 +159,7 @@ plt.xlabel(r'Wavelength ($\mu$m)')
 plt.ylabel(
     r'$\frac{\mathrm{model}(\lambda_\mathrm{i})- \nu \varepsilon_{\nu,'
     r'\mathrm{i}}}'
-           r'{\sigma_\mathrm{i}}$')
+    r'{\sigma_\mathrm{i}}$')
 # plt.show()
 
 fig_emiss_z, axes_emiss_z = plt.subplots(4, 3, figsize=(12, 16))
@@ -268,16 +268,12 @@ for nkey, key in enumerate(config_data['ssp_models']):
           21.98 - ebl_class.ebl_ssp_spline(0.608, 0.))
     # print('%.3f' % (memory_usage_psutil()))
 
-
     ax_cob.plot(waves_ebl, ebl_class.ebl_ssp_spline(
         waves_ebl, 0.),
                 linestyle='-', color=colors[nkey % len(colors)],
                 lw=2,
                 # markersize=16, marker=markers[nkey]
                 )
-
-
-
 
     # plt.figure(fig_emiss_lambda)
     # for nz, zz in enumerate(np.unique(emiss_data['z'])):
@@ -315,7 +311,7 @@ for nkey, key in enumerate(config_data['ssp_models']):
                  * ebl_class.emiss_ssp_spline(
                      ll * np.ones(len(z_array)), z_array)
                  * 1e-7,
-                 linestyle='-', #marker=markers[nkey],
+                 linestyle='-',  # marker=markers[nkey],
                  color=colors[nkey % len(colors)], lw=2)
 
     labels_emiss.append(
@@ -324,25 +320,27 @@ for nkey, key in enumerate(config_data['ssp_models']):
                                     linestyle='-',
                                     color=colors[nkey % len(colors)]))
 
-    ax_met.plot(z_array,
-                ebl_model.metall_model(
-                    zz_array=z_array,
-                    metall_model=config_data['ssp_models'][key]['metall_formula'],
-                    metall_params=config_data['ssp_models'][key]['metall_params']
-                ),
-                label=config_data['ssp_models'][key]['name'],
-                color=colors[nkey % len(colors)])
+    ax_met.plot(
+        z_array,
+        ebl_model.metall_model(
+            zz_array=z_array,
+            metall_model=config_data['ssp_models'][key]['metall_formula'],
+            metall_params=config_data['ssp_models'][key]['metall_params']
+        ),
+        label=config_data['ssp_models'][key]['name'],
+        color=colors[nkey % len(colors)])
 
-    ax_sfr.plot(z_data, ebl_model.sfr_model(
-        zz_array=z_data,
-        sfr_model=config_data['ssp_models'][key]['sfr_formula'],
-        sfr_params=config_data['ssp_models'][key]['sfr_params']),
-                label=config_data['ssp_models'][key]['name'],
-                color=colors[nkey % len(colors)])
+    ax_sfr.plot(
+        z_data, ebl_model.sfr_model(
+            zz_array=z_data,
+            sfr_model=config_data['ssp_models'][key]['sfr_formula'],
+            sfr_params=config_data['ssp_models'][key]['sfr_params']),
+        label=config_data['ssp_models'][key]['name'],
+        color=colors[nkey % len(colors)])
 
     color_ssp = ['b', 'orange', 'k', 'r', 'green', 'grey', 'limegreen',
                  'purple', 'brown']
-#
+    #
     if ('path_ssp' not in config_data['ssp_models'][key]['ssp']
             or
             config_data['ssp_models'][key]['ssp']['path_ssp']
@@ -354,17 +352,16 @@ for nkey, key in enumerate(config_data['ssp_models']):
                 config_data['ssp_models'][key]['ssp']['path_ssp'].replace(
                     'data/ssp_synthetic_spectra/', ''))
         except KeyError:
-            previous_ssp.append(
-            config_data['ssp_models'][key]['ssp']['ssp_type'])
-            labels_ssp2.append(
-                config_data['ssp_models'][key]['ssp']['ssp_type'])
+            previous_ssp.append(key)
+            labels_ssp2.append(key)
 
         handles_ssp2.append(
             plt.Line2D([], [], linewidth=2,
                        linestyle=linstyles_ssp[len(previous_ssp) - 1],
                        color='k'))
-        list_met = ebl_class._ssp_metall
-        list_met = np.sort(list_met)
+
+        list_met = np.sort(ebl_class._ssp_metall)
+
         for n_met, met in enumerate(list_met):
             for i, age in enumerate([6.0, 6.5, 7.5, 8., 8.5, 9., 10.]):
                 ax_ssp.plot(
@@ -386,7 +383,8 @@ for nkey, key in enumerate(config_data['ssp_models']):
     if nkey == 0:
         for ni, ii in enumerate(zz_dustabs):
             if ni == 0:
-                color_dustabs.append(plt.cm.CMRmap(ni / float(len(zz_dustabs))))
+                color_dustabs.append(
+                    plt.cm.CMRmap(ni / float(len(zz_dustabs))))
 
                 plt.plot(wv_dustabs,
                          ebl_model.dust_abs_fraction(
@@ -401,7 +399,8 @@ for nkey, key in enumerate(config_data['ssp_models']):
                          alpha=1, label=key)
 
             else:
-                color_dustabs.append(plt.cm.CMRmap(ni / float(len(zz_dustabs))))
+                color_dustabs.append(
+                    plt.cm.CMRmap(ni / float(len(zz_dustabs))))
                 plt.plot(wv_dustabs,
                          ebl_model.dust_abs_fraction(
                              wv_array=wv_dustabs,
@@ -413,7 +412,6 @@ for nkey, key in enumerate(config_data['ssp_models']):
                              verbose=False),
                          ls=linstyles_ssp[nkey], c=color_dustabs[ni],
                          alpha=1)
-
 
 # print('%.3f' %(memory_usage_psutil()))
 plt.figure(fig_cob)
@@ -488,7 +486,7 @@ plt.xlabel(r'Wavelength ($\mu$m)')
 
 # aa = plt.legend()
 bb = plt.legend([plt.Line2D([], [], linewidth=2,
-                       linestyle='-', color=color_dustabs[i])
+                            linestyle='-', color=color_dustabs[i])
                  for i in range(len(zz_dustabs))],
                 zz_dustabs, title='Redshift')
 # ax_dustabs.add_artist(aa)
@@ -498,7 +496,6 @@ plt.xscale('log')
 
 plt.ylim(0., 1.1)
 plt.xlim(0.05, 10)
-
 
 # Save the figures
 fig_cob.savefig(input_file_dir + '/ebl_bare' + '.png',
@@ -536,4 +533,4 @@ fig_dustabs.savefig(
     input_file_dir + '/dustabs' + '.pdf',
     bbox_inches='tight')
 
-plt.show()
+# plt.show()

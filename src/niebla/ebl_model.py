@@ -265,6 +265,7 @@ class EBL_model(object):
             yaml_file['file_name'] = '/kroupa_'
             yaml_file['ignore_rows'] = 6
             yaml_file['total_stellar_mass'] = 6.
+            yaml_file['L_lambda'] = True
 
         elif yaml_file['ssp_type'] == 'stripped_Goetberg19':
             path_ssp = (
@@ -273,8 +274,9 @@ class EBL_model(object):
                     + '/stripped_Goetberg19/')
 
             yaml_file['ssp_type'] = 'generic'
-            yaml_file['ignore_rows'] = 6
+            yaml_file['ignore_rows'] = 0
             yaml_file['total_stellar_mass'] = 6.
+            yaml_file['L_lambda'] = True
 
         else:
             path_ssp = data_path + yaml_file['path_ssp']
@@ -321,9 +323,9 @@ class EBL_model(object):
             # Define the quantities we work with
             ssp_log_time = self.log10_safe(t_total)  # log(time/yrs)
             ssp_log_freq = self.log10_safe(  # log(frequency/Hz)
-                c.c.value / l_total[::-1] / 1e-10)
+                c.c.value / l_total / 1e-10)
             ssp_log_emis = (
-                    dd_total[::-1]  # log(L_nu[erg/s/Hz/M_solar])
+                    dd_total  # log(L_nu[erg/s/Hz/M_solar])
                     - float(yaml_file['total_stellar_mass'])
                     + np.log10(1e10 * c.c.value)
                     - 2. * ssp_log_freq[:, np.newaxis, np.newaxis])
@@ -338,10 +340,10 @@ class EBL_model(object):
 
             In each file:
             - The [0,0] entry is empty.
-            - The zeroth column [1:] contains the time/age of the SSP [years].
-            - The first row [1:] contains the wavelengths [Angstroms].
+            - The zeroth column [1:, 0] contains the wavelengths [Angstroms].
+            - The first row [0, 1:] contains the time/age of the SSP [years].
             - The remaining values (n x m) are the luminosity L_lambda
-                [erg/sec/A/Msun].
+                [erg/sec/A/Msun] or L_nu [erg/sec/Hz/Msun].
 
             This method assumes that all files share the wavelength and
             age array.
@@ -383,7 +385,8 @@ class EBL_model(object):
             ssp_log_freq = self.log10_safe(  # log(frequency/Hz)
                 c.c.value / l_total / 1e-10)
 
-            ssp_log_emis = self.log10_safe(ssp_log_emis)
+            ssp_log_emis = (self.log10_safe(ssp_log_emis)
+                            - float(yaml_file['total_stellar_mass']))
 
             if yaml_file['L_lambda']:
                 ssp_log_emis += (np.log10(1e10 * c.c.value)
@@ -544,8 +547,7 @@ class EBL_model(object):
         self.logging_info('SSP parameters: %s' % yaml_data['name'])
 
         if (self._last_yaml_emiss is None
-                or (yaml_data['ssp'] != self._last_yaml_emiss['ssp'])
-        ):
+                or (yaml_data['ssp'] != self._last_yaml_emiss['ssp'])):
             self.read_SSP_file(yaml_data['ssp'])
 
         if (self._ssp_log_time_init != self._last_ssp_log_time_init
@@ -562,11 +564,18 @@ class EBL_model(object):
             self._log_t_ssp_intcube = (
                     (self._log_t_ssp_intcube - self._ssp_log_time_init)
                     * self._steps_integration_cube
-                    + self._ssp_log_time_init)
+                    + self._ssp_log_time_init
+            )
 
             self._shifted_zz_emiss = self.t2z(np.log10(
                 lookback_time_cube.value
                 + 10. ** self._log_t_ssp_intcube))
+
+            self._mean_metall_cube_log = self.log10_safe(metall_model(
+                zz_array=self._shifted_zz_emiss,
+                metall_model=yaml_data['metall_formula'],
+                metall_params=yaml_data['metall_params'],
+                verbose=self._log_prints))
 
             self.logging_info(
                 'SSP emissivity: set time integration cube')
@@ -581,18 +590,18 @@ class EBL_model(object):
                 verbose=self._log_prints))
             self.logging_info('Dust reem: mean metall calculation')
 
-            # Interior of emissivity integral:
-            # L{t(z)-t(z')} * dens(z') * |d(log10(t'))/dt'|
-            self._kernel_emiss = (
-                    10. ** self._log_t_ssp_intcube  # Variable change,
-                    * np.log(10.)  # integration over y=log10(x)
-                    * 10. **  # L(t)
-                    self.ssp_lumin_spline(
-                        freq_array=self._freq_array,
-                        age_array=self._log_t_ssp_intcube,
-                        metall_array=self._mean_metall_cube_log)
-            )
-            self.logging_info('SSP emissivity: set the initial kernel')
+        # Interior of emissivity integral:
+        # L{t(z)-t(z')} * dens(z') * |d(log10(t'))/dt'|
+        self._kernel_emiss = (
+                10. ** self._log_t_ssp_intcube  # Variable change,
+                * np.log(10.)  # integration over y=log10(x)
+                * 10. **  # L(t)
+                self.ssp_lumin_spline(
+                    freq_array=self._freq_array,
+                    age_array=self._log_t_ssp_intcube,
+                    metall_array=self._mean_metall_cube_log)
+        )
+        self.logging_info('SSP emissivity: set the initial kernel')
 
         # Dust absorption (applied in log10)
         fract_dust_Notabs = dust_abs_fraction(
@@ -667,7 +676,7 @@ class EBL_model(object):
                 xx = ((c.h * 10 ** freq * u.Hz
                        / c.k_B / T / u.K).to(1)).value
                 yy = (15. / np.pi ** 4. / 10 ** freq
-                        * xx ** 4. / (np.exp(xx) - 1.))
+                      * xx ** 4. / (np.exp(xx) - 1.))
 
                 return yy
 
@@ -680,17 +689,16 @@ class EBL_model(object):
                 array_fract = np.array(yaml_data['dust_reem_params']['fracts'])
 
             for nn, tt in enumerate(array_tt):
-                if nn == len(array_tt)-1:
-                    norm_shape_reem += (#min(
-                        (1. - (array_fract))#,
-                        #1.)
-                        * bb_plank(array_tt[-1])
+                if nn == len(array_tt) - 1:
+                    norm_shape_reem += (  # min(
+                            (1. - (array_fract))  # ,
+                            # 1.)
+                            * bb_plank(array_tt[-1])
                     )
                 else:
                     norm_shape_reem += (
-                    array_fract[nn]
-                    * bb_plank(tt))
-
+                            array_fract[nn]
+                            * bb_plank(tt))
 
             int_emiss_reem = simpson(
                 (fract_reem * emiss_ssp_cube

@@ -14,9 +14,9 @@ from astropy import units as u
 import astropy.constants as c
 from astropy.cosmology import FlatLambdaCDM
 
-from niebla.sfr_models import sfr_model
-from niebla.metall_models import metall_model
-from niebla.dust_absorption_models import dust_abs_fraction
+from src.niebla.sfr_models import sfr_model
+from src.niebla.metall_models import metall_model
+from src.niebla.dust_absorption_models import dust_abs_fraction
 
 try:
     from hmf import MassFunction

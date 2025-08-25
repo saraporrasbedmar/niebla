@@ -16,3 +16,5 @@ venv/*
 *.output1
 *.input1
 timeused
+
+notebooks/*.txt

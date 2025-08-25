@@ -127,7 +127,10 @@ setup(
     # installed, specify them here.
     include_package_data=True,
     package_data={  # Optional
-        "niebla": ["data/*"],
+        "niebla": ["data/*",
+        "data/ssp_synthetic_spectra/starburst99/**/*",
+        "data/Swire_library/*",
+        ],
     },
     # Entry points. The following would provide a command called `sample` which
     # executes the function `main` from this package when invoked:

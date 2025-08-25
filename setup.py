@@ -125,8 +125,9 @@ setup(
     #},
     # If there are data files included in your packages that need to be
     # installed, specify them here.
+    include_package_data=True,
     package_data={  # Optional
-        "niebla": ["src/niebla/data/*"],
+        "niebla": ["data/*"],
     },
     # Entry points. The following would provide a command called `sample` which
     # executes the function `main` from this package when invoked:

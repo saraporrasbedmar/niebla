@@ -29,7 +29,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/guides/single-sourcing-package-version/
-    version="0.0.5",  # Required
+    version="0.0.6",  # Required
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
@@ -125,9 +125,9 @@ setup(
     #},
     # If there are data files included in your packages that need to be
     # installed, specify them here.
-    #package_data={  # Optional
-    #    "sample": ["package_data.dat"],
-    #},
+    package_data={  # Optional
+        "niebla": ["data/*"],
+    },
     # Entry points. The following would provide a command called `sample` which
     # executes the function `main` from this package when invoked:
     #entry_points={  # Optional

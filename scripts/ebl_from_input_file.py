@@ -6,16 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 # from scipy.interpolate import UnivariateSpline, RegularGridInterpolator
 
-import sys
-print(sys.path)
-sys.path.append('/home/saraporras/PycharmProjects/niebla/src/niebla/')
-print(sys.path)
+from astropy.constants import c
+
 
 from niebla import ebl_model
-
-print(os.listdir())
-
-from astropy.constants import c
 
 # from data.cb_measurs.import_cb_measurs import import_cb_data
 # from data.emissivity_measurs.emissivity_read_data import emissivity_data
@@ -349,11 +343,22 @@ for nkey, key in enumerate(config_data['ssp_models']):
     color_ssp = ['b', 'orange', 'k', 'r', 'green', 'grey', 'limegreen',
                  'purple', 'brown']
 #
-    if config_data['ssp_models'][key]['ssp']['path_ssp'] not in previous_ssp:
-        previous_ssp.append(config_data['ssp_models'][key]['ssp']['path_ssp'])
-        labels_ssp2.append(
-            config_data['ssp_models'][key]['ssp']['path_ssp'].replace(
-                'data/ssp_synthetic_spectra/', ''))
+    if ('path_ssp' not in config_data['ssp_models'][key]['ssp']
+            or
+            config_data['ssp_models'][key]['ssp']['path_ssp']
+            not in previous_ssp):
+        try:
+            previous_ssp.append(
+                config_data['ssp_models'][key]['ssp']['path_ssp'])
+            labels_ssp2.append(
+                config_data['ssp_models'][key]['ssp']['path_ssp'].replace(
+                    'data/ssp_synthetic_spectra/', ''))
+        except KeyError:
+            previous_ssp.append(
+            config_data['ssp_models'][key]['ssp']['ssp_type'])
+            labels_ssp2.append(
+                config_data['ssp_models'][key]['ssp']['ssp_type'])
+
         handles_ssp2.append(
             plt.Line2D([], [], linewidth=2,
                        linestyle=linstyles_ssp[len(previous_ssp) - 1],

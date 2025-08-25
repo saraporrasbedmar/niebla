@@ -23,6 +23,8 @@ try:
 except ModuleNotFoundError:
     print('Module hmf not loaded')
 
+data_path = os.path.join(os.path.split(__file__)[0], 'data/')
+
 
 class EBL_model(object):
     """
@@ -242,14 +244,49 @@ class EBL_model(object):
         log10(new total mass).
 
         """
+        if yaml_file['ssp_type'] == 'example_SB99':
+            path_ssp = (
+                    data_path
+                    + 'ssp_synthetic_spectra/starburst99'
+                    + '/kroupa_padova/')
+
+            yaml_file['ssp_type'] = 'SB99'
+            yaml_file['file_name'] = '/kroupa_'
+            yaml_file['ignore_rows'] = 6
+            yaml_file['total_stellar_mass'] = 6.
+
+        elif yaml_file['ssp_type'] == 'example_pegase3':
+            path_ssp = (
+                    data_path
+                    + 'ssp_synthetic_spectra/pegase3'
+                    + '/kroupa_padova/')
+
+            yaml_file['ssp_type'] = 'generic'
+            yaml_file['file_name'] = '/kroupa_'
+            yaml_file['ignore_rows'] = 6
+            yaml_file['total_stellar_mass'] = 6.
+
+        elif yaml_file['ssp_type'] == 'stripped_Goetberg19':
+            path_ssp = (
+                    data_path
+                    + 'ssp_synthetic_spectra/starburst99'
+                    + '/stripped_Goetberg19/')
+
+            yaml_file['ssp_type'] = 'generic'
+            yaml_file['ignore_rows'] = 6
+            yaml_file['total_stellar_mass'] = 6.
+
+        else:
+            path_ssp = data_path + yaml_file['path_ssp']
+
         if yaml_file['ssp_type'] == 'SB99':
 
-            ssp_metall = np.sort(np.array(
-                os.listdir(yaml_file['path_ssp']), dtype=float))
+            ssp_metall = np.sort(
+                np.array(os.listdir(path_ssp), dtype=float))
 
             # Open one of the files and check for time steps and frequencies
             d = np.loadtxt(
-                yaml_file['path_ssp'] + str(ssp_metall[0])
+                path_ssp + str(ssp_metall[0])
                 + yaml_file['file_name']
                 + str(ssp_metall[0]).replace('0.', '')
                 + '.spectrum1',
@@ -266,7 +303,7 @@ class EBL_model(object):
 
             for n_met, met in enumerate(ssp_metall):
                 data = np.loadtxt(
-                    yaml_file['path_ssp'] + str(met) +
+                    path_ssp + str(met) +
                     yaml_file['file_name'] + str(met).replace('0.', '')
                     + '.spectrum1',
                     skiprows=yaml_file['ignore_rows'])
@@ -310,11 +347,11 @@ class EBL_model(object):
             age array.
             """
             ssp_metall = np.sort(np.array(
-                os.listdir(yaml_file['path_ssp']), dtype=float))
+                os.listdir(path_ssp), dtype=float))
 
             # Open one of the files and check for time steps and frequencies
             data_generic = np.loadtxt(
-                yaml_file['path_ssp'] + str(ssp_metall[0]),
+                path_ssp + str(ssp_metall[0]),
                 skiprows=yaml_file['ignore_rows'])
 
             # Get unique time steps and frequencies
@@ -328,7 +365,7 @@ class EBL_model(object):
 
             for n_met, met in enumerate(ssp_metall):
                 data = np.loadtxt(
-                    yaml_file['path_ssp'] + str(met),
+                    path_ssp + str(met),
                     skiprows=yaml_file['ignore_rows'])
                 ssp_log_emis[:, :, n_met + 1] = data[1:, 1:]
 
@@ -354,8 +391,7 @@ class EBL_model(object):
                                  [:, np.newaxis, np.newaxis])
 
         else:
-            print('SSP type not recognized')
-            exit()
+            ValueError('SSP type not recognized')
 
         ssp_log_emis[np.isnan(ssp_log_emis)] = -43.
         ssp_log_emis[
@@ -386,7 +422,9 @@ class EBL_model(object):
         if yaml_data['library'] == 'chary2001':
 
             f_tir = 10 ** float(yaml_data['f_tir'])
-            chary = fits.open(yaml_data['file_path'])
+            chary = fits.open(
+                data_path
+                + 'ssp_synthetic_spectra/chary2001/chary_elbaz.fits')
             self.logging_info('Dust reem: reading of template file')
 
             ir_wv = chary[1].data.field('LAMBDA')[0]

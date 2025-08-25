@@ -1,0 +1,2 @@
+recursive-include src/niebla/data * *
+recursive-include src/niebla/data/Swire_library *

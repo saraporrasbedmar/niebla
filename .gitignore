@@ -7,3 +7,8 @@ src/niebla.egg-info/*
 *.xml
 *.iml
 
+venv/*
+.idea/.
+
+*.pdf
+*.png

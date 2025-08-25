@@ -93,9 +93,9 @@ setup(
     # `src/`, it is necessary to specify the `package_dir` argument.
     package_dir={"": "src"},  # Optional
     # You can just specify package directories manually here if your project is
-    # simple. Or you can use find_packages().
-    #
-    packages=["niebla"],  # Required
+    # simple. Or you can use find_packages().    
+    packages=find_packages(where="src"),
+    #packages=["niebla"],  # Required
     # Specify which Python versions you support. In contrast to the
     # 'Programming Language' classifiers above, 'pip install' will check this
     # and refuse to install the project if the version does not match. See

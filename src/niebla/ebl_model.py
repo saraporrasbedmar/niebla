@@ -14,9 +14,11 @@ from astropy import units as u
 import astropy.constants as c
 from astropy.cosmology import FlatLambdaCDM
 
+from src.niebla.safe_log10 import log10_safe
 from src.niebla.sfr_models import sfr_model
 from src.niebla.metall_models import metall_model
 from src.niebla.dust_absorption_models import dust_abs_fraction
+from src.niebla.dust_reemission_models import dust_reem
 
 try:
     from hmf import MassFunction
@@ -144,12 +146,12 @@ class EBL_model(object):
 
         self._z_max = z_max
         self._lambda_array = lambda_array[::-1]
-        self._freq_array = self.log10_safe(
+        self._freq_array = log10_safe(
             c.c.value / lambda_array[::-1] * 1e6)
         self._freq_array = np.expand_dims(self._freq_array, axis=(1, 2))
         self._t_intsteps = t_intsteps
 
-        tt = self.log10_safe(
+        tt = log10_safe(
             self._cosmo.lookback_time(z_array).to(u.yr).value)
 
         tt = np.insert(tt, 0, 0)
@@ -158,7 +160,7 @@ class EBL_model(object):
         self._z_array = np.expand_dims(z_array, axis=(0, 2))
 
         self._t2z = UnivariateSpline(
-            tt, self.log10_safe(self._z_array),
+            tt, log10_safe(self._z_array),
             s=0, k=1)
 
         self._kernel_emiss = None
@@ -218,15 +220,6 @@ class EBL_model(object):
 
     def t2z(self, tt):
         return 10 ** self._t2z(tt)
-
-    @staticmethod
-    def log10_safe(array_input):
-        array_copy = array_input.copy()
-        array_copy[array_copy < 1e-43] = 1e-43
-        array_copy = np.log10(array_copy)
-        array_copy[np.isnan(array_copy)] = -43.
-        array_copy[np.invert(np.isfinite(array_copy))] = -43.
-        return array_copy
 
     def read_SSP_file(self, yaml_file):
         """
@@ -321,8 +314,8 @@ class EBL_model(object):
             dd_total[:, :, -1] = dd_total[:, :, -2]
 
             # Define the quantities we work with
-            ssp_log_time = self.log10_safe(t_total)  # log(time/yrs)
-            ssp_log_freq = self.log10_safe(  # log(frequency/Hz)
+            ssp_log_time = log10_safe(t_total)  # log(time/yrs)
+            ssp_log_freq = log10_safe(  # log(frequency/Hz)
                 c.c.value / l_total / 1e-10)
             ssp_log_emis = (
                     dd_total  # log(L_nu[erg/s/Hz/M_solar])
@@ -380,12 +373,12 @@ class EBL_model(object):
             ssp_log_emis[:, :, -1] = ssp_log_emis[:, :, -2]
 
             # Calculate the logarithms of all the values
-            ssp_log_time = self.log10_safe(t_total)
+            ssp_log_time = log10_safe(t_total)
 
-            ssp_log_freq = self.log10_safe(  # log(frequency/Hz)
+            ssp_log_freq = log10_safe(  # log(frequency/Hz)
                 c.c.value / l_total / 1e-10)
 
-            ssp_log_emis = (self.log10_safe(ssp_log_emis)
+            ssp_log_emis = (log10_safe(ssp_log_emis)
                             - float(yaml_file['total_stellar_mass']))
 
             if yaml_file['L_lambda']:
@@ -403,7 +396,7 @@ class EBL_model(object):
         self._ssp_lumin_spline = RegularGridInterpolator(
             points=(ssp_log_freq,
                     ssp_log_time,
-                    self.log10_safe(ssp_metall)),
+                    log10_safe(ssp_metall)),
             values=ssp_log_emis,
             method='linear',
             bounds_error=False, fill_value=-43
@@ -414,118 +407,6 @@ class EBL_model(object):
         del ssp_log_freq, ssp_log_time, ssp_metall, ssp_log_emis
         self.logging_info('Reading of SSP file')
         return
-
-    def spline_dust_reemission(self, yaml_data):
-        """
-        Provide the spline of dust reemission, assuming either BOSA
-        or Chary2001 templates are being used. For other templates,
-        please upload them manually.
-        :param yaml_data: dictionary
-        Tells which templates to use.
-        :return:
-        """
-
-        if yaml_data['library'] == 'chary2001':
-
-            f_tir = 10 ** float(yaml_data['f_tir'])
-            chary = fits.open(
-                data_path
-                + 'ssp_synthetic_spectra/chary2001/chary_elbaz.fits')
-            self.logging_info('Dust reem: reading of template file')
-
-            ir_wv = chary[1].data.field('LAMBDA')[0]
-            ir_freq = c.c.value / ir_wv * 1e6
-
-            ir_lum = (
-                    self.log10_safe(chary[1].data.field('NULNUINLSUN')[0])
-                    - np.log10(f_tir))
-
-            self.logging_info('Dust reem: calculation of luminosities')
-
-            aaa = np.zeros((np.shape(ir_lum)[0], np.shape(ir_lum)[1] + 2))
-            aaa[:, 1:-1] = ir_lum
-            aaa[:, 0] = ir_lum[:, 0] - 10.
-            aaa[:, -1] = ir_lum[:, -1] + 10.
-            ir_lum = aaa
-
-            # Cap the dust reemisison to the wavelength where there is
-            # proper reemission, not the whole possible spectrum
-            ir_lum[ir_wv < yaml_data['wv_reem_min'], :] = -43
-
-            l_tir = np.log(10) * simpson(
-                10 ** ir_lum[::-1], x=np.log10(ir_freq)[::-1], axis=0)
-            self.logging_info('Dust reem: integration of Ltir')
-
-            sort_order = np.argsort(l_tir)
-            l_tir = l_tir[sort_order]
-            l_tir *= c.L_sun.to(u.erg / u.s).value
-
-            ir_lum -= np.log10(ir_freq[:, np.newaxis])
-            ir_lum += np.log10(c.L_sun.to(u.erg / u.s).value)
-            ir_lum[ir_lum < -43] = -43
-            ir_lum = ir_lum[:, sort_order]
-
-            ir_lum_expanded = np.zeros(
-                (np.shape(ir_lum)[0], np.shape(ir_lum)[1], 2))
-            ir_lum_expanded[:, :, 0] = ir_lum
-            ir_lum_expanded[:, :, 1] = ir_lum
-
-            self.logging_info('Dust reem: creation of big array')
-
-            # 3D spline creation
-            try:
-                dust_reem_spline = RegularGridInterpolator(
-                    points=(np.log10(ir_wv),
-                            np.log10(l_tir),
-                            [-43, 1.]),
-                    values=ir_lum_expanded,
-                    method='linear',
-                    bounds_error=False, fill_value=-43
-                )
-            except:
-                print(l_tir)
-
-
-        elif yaml_data['library'] == 'bosa':
-
-            data = fits.open(yaml_data['file_path'])
-            aaa = data[1].data
-
-            yyy = np.column_stack((
-                aaa['nuLnu[Z=6.99103]'],
-                aaa['nuLnu[Z=6.99103]'], aaa['nuLnu[Z=7.99103]'],
-                aaa['nuLnu[Z=8.29205999]'], aaa['nuLnu[Z=8.69]'],
-                aaa['nuLnu[Z=9.08794001]'], aaa['nuLnu[Z=9.08794001]']))
-            yyy = (yyy * (c.L_sun.to(u.erg / u.s)).value
-                   * (aaa['wavelength'] * 1e-9 / c.c.value)[:, np.newaxis])
-
-            yyy = self.log10_safe(yyy)
-
-            yyy_whole = np.zeros((np.shape(yyy)[0], 2, np.shape(yyy)[1]))
-            yyy_whole[:, 0, :] = yyy - np.log10(1e5)
-            yyy_whole[:, 1, :] = yyy + np.log10(1e8)
-
-            yyy_whole[np.isnan(yyy_whole)] = -43.
-            yyy_whole[np.invert(np.isfinite(yyy_whole))] = -43.
-
-            l_tir = np.array([1e-5, 1e8]) * c.L_sun.to(u.erg / u.s).value
-
-            dust_reem_spline = RegularGridInterpolator(
-                points=(np.log10(aaa['wavelength'] * 1e-3),
-                        np.log10(l_tir),
-                        np.log10([1e-43, 0.0004, 0.004,
-                                  0.008, 0.02, 0.05, 1.])),
-                values=yyy_whole,
-                method='linear',
-                bounds_error=False, fill_value=-43.
-            )
-        else:
-            print(
-                'Unrecognized name of dust reemission type.'
-                '\nListed libraries: chary2001, bosa .')
-            return 0.
-
-        return dust_reem_spline
 
     def emiss_ssp_calculation(self, yaml_data):
         """
@@ -571,7 +452,7 @@ class EBL_model(object):
                 lookback_time_cube.value
                 + 10. ** self._log_t_ssp_intcube))
 
-            self._mean_metall_cube_log = self.log10_safe(metall_model(
+            self._mean_metall_cube_log = log10_safe(metall_model(
                 zz_array=self._shifted_zz_emiss,
                 metall_model=yaml_data['metall_formula'],
                 metall_params=yaml_data['metall_params'],
@@ -583,7 +464,7 @@ class EBL_model(object):
         if (self._last_yaml_emiss is None
                 or np.any(self._last_yaml_emiss['metall_params']
                           != yaml_data['metall_params'])):
-            self._mean_metall_cube_log = self.log10_safe(metall_model(
+            self._mean_metall_cube_log = log10_safe(metall_model(
                 zz_array=self._shifted_zz_emiss,
                 metall_model=yaml_data['metall_formula'],
                 metall_params=yaml_data['metall_params'],
@@ -615,8 +496,10 @@ class EBL_model(object):
         self.logging_info('SSP emissivity: set dust absorption')
 
         # Dust reemission loading ------------------------------------
-        if (yaml_data['dust_reem'] is True and
-                yaml_data['dust_reem_params']['library'] != 'three_grey_body'):
+        if (yaml_data['dust_reem'] is True
+                and
+                yaml_data['dust_reem_parametrization']['library']
+                != 'black_bodies'):
             self.logging_info('Dust reem: enter')
 
             lumin_abs = (
@@ -634,18 +517,20 @@ class EBL_model(object):
             l_int_abs = simpson(lumin_abs, x=self._freq_array, axis=0)
             self.logging_info('Dust reem: integration of Lssp')
 
-            dust_reem_spline = self.spline_dust_reemission(
-                yaml_data['dust_reem_params'])
+            # dust_reem_spline = self.spline_dust_reemission(
+            #     yaml_data['dust_reem_parametrization'])
             self.logging_info('Dust reem: dust spline creation')
 
             kernel_emiss += (
                     10. ** self._log_t_ssp_intcube  # Variable change,
                     * np.log(10.)
-                    * 10 ** (dust_reem_spline(
-                (np.log10(self._lambda_array)[:, np.newaxis, np.newaxis],
-                 np.log10(l_int_abs)[np.newaxis, :, :],
-                 self._mean_metall_cube_log
-                 )))
+                    * 10 ** dust_reem(
+                wave_array=np.log10(self._lambda_array)[:, np.newaxis, np.newaxis],
+                l_tir_array=np.log10(l_int_abs)[np.newaxis, :, :],
+                metall_array=self._mean_metall_cube_log,
+                dust_reem_model=yaml_data['dust_reem_parametrization']['library'],
+                dust_reem_params=yaml_data['dust_reem_parametrization']
+                 )
             )
             self.logging_info('Dust reem: sum to kernel_emiss')
 
@@ -666,7 +551,8 @@ class EBL_model(object):
         self.logging_info('SSP emissivity: integrate emissivity')
 
         if (yaml_data['dust_reem'] is True and
-                yaml_data['dust_reem_params']['library'] == 'three_grey_body'):
+                yaml_data['dust_reem_parametrization']['library']
+                == 'black_bodies'):
 
             fract_reem = np.squeeze(
                 (1. - fract_dust_Notabs) / fract_dust_Notabs)
@@ -681,12 +567,16 @@ class EBL_model(object):
                 return yy
 
             norm_shape_reem = np.zeros_like(np.squeeze(self._freq_array))
-            if type(yaml_data['dust_reem_params']['T']) == np.float64:
-                array_tt = np.array([yaml_data['dust_reem_params']['T']])
+            if type(yaml_data['dust_reem_parametrization']['T'])\
+                    == np.float64:
+                array_tt = np.array(
+                    [yaml_data['dust_reem_parametrization']['T']])
 
             else:
-                array_tt = np.asarray(yaml_data['dust_reem_params']['T'])
-                array_fract = np.array(yaml_data['dust_reem_params']['fracts'])
+                array_tt = np.asarray(
+                    yaml_data['dust_reem_parametrization']['T'])
+                array_fract = np.array(
+                    yaml_data['dust_reem_parametrization']['fracts'])
 
             for nn, tt in enumerate(array_tt):
                 if nn == len(array_tt) - 1:
@@ -713,7 +603,7 @@ class EBL_model(object):
         self._emiss_ssp_spline = RegularGridInterpolator(
             points=(np.squeeze(self._freq_array),
                     np.squeeze(self._z_array)),
-            values=self.log10_safe(emiss_ssp_cube),
+            values=log10_safe(emiss_ssp_cube),
             method='linear',
             bounds_error=False, fill_value=-43
         )
@@ -772,7 +662,7 @@ class EBL_model(object):
         self._ebl_ssp_spline = RectBivariateSpline(
             x=self._freq_array,
             y=self._z_array,
-            z=self.log10_safe(ebl_ssp_cube),
+            z=log10_safe(ebl_ssp_cube),
             kx=1, ky=1)
 
         # Free memory and log the time
@@ -788,7 +678,7 @@ class EBL_model(object):
                                    * (np.max(self._z_array)
                                       - self._z_array))
 
-            self._shifted_freq = (self._freq_array + self.log10_safe(
+            self._shifted_freq = (self._freq_array + log10_safe(
                 (1. + self._ebl_z_intcube) / (1. + self._z_array)))
 
             self._ebl_intcube = (10. ** self._freq_array
@@ -970,7 +860,7 @@ class EBL_model(object):
         self._emiss_ihl_spline = RectBivariateSpline(
             x=self._freq_array,
             y=self._z_array,
-            z=self.log10_safe(emiss_ihl_cube.value),
+            z=log10_safe(emiss_ihl_cube.value),
             kx=1, ky=1)
 
         # Free memory and log the time
@@ -1035,7 +925,7 @@ class EBL_model(object):
         self._ebl_ihl_spline = RectBivariateSpline(
             x=self._freq_array,
             y=self._z_array,
-            z=self.log10_safe(ebl_ihl_cube),
+            z=log10_safe(ebl_ihl_cube),
             kx=1, ky=1)
 
         # Free memory and log the time

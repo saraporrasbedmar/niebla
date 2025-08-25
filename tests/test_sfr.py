@@ -2,7 +2,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
-import ebl_codes.sfr_models as sfr
+import niebla.sfr_models as sfr
 
 
 def test_sfr_madau14():

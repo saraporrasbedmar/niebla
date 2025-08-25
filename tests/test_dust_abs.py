@@ -2,7 +2,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
-import ebl_codes.dust_absorption_models as dust
+import niebla.dust_absorption_models as dust
 
 
 def test_dust_att_finke():

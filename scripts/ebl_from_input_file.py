@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 
 from astropy.constants import c
 
-from src.niebla import ebl_model
 
 # from niebla import ebl_model
+from src.niebla import ebl_model
 
 # from data.cb_measurs.import_cb_measurs import import_cb_data
 # from data.emissivity_measurs.emissivity_read_data import emissivity_data

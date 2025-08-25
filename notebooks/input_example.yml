@@ -101,7 +101,7 @@ ssp_models:
         - 0.35
         - 4.12
         - 5.89
-    dust_reem: false
+    dust_reem: true
     dust_reem_params:
       library: chary2001
       f_tir: 9.68  # [dex]

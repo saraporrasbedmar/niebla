@@ -1,0 +1,39 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: nu
+#   unit: Hz
+#   datatype: float32
+# - name: nuInu
+#   unit: W / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: W / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: W / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: COB
+# - reference_id: 2017ApJ...839....7M
+# - observatory: CIBER
+# - label: CIBER (Matsuura+ ‘17)
+# - observable_type: UL
+# - comments: "Data from R. Hill (2018). Formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+nu nuInu nuInu_errn nuInu_errp
+3.7474E+14 4.1100E-08 1.5300E-08 1.5700E-08
+3.6120E+14 3.0600E-08 1.4700E-08 1.5800E-08
+3.4860E+14 2.3100E-08 1.4400E-08 1.5100E-08
+3.3310E+14 2.9600E-08 1.4000E-08 1.4100E-08
+3.1557E+14 3.4200E-08 1.3700E-08 1.3800E-08
+2.9979E+14 3.1200E-08 1.3500E-08 1.3400E-08
+2.8552E+14 3.1300E-08 1.2900E-08 1.3100E-08
+2.7008E+14 3.6700E-08 1.2600E-08 1.2600E-08
+2.5406E+14 3.2500E-08 1.2200E-08 1.3300E-08
+2.3983E+14 3.8700E-08 1.1600E-08 1.2600E-08
+2.2541E+14 4.1700E-08 1.0900E-08 1.1300E-08
+2.1112E+14 4.2700E-08 1.0300E-08 1.1700E-08
+1.9854E+14 3.7800E-08 1.0100E-08 1.6400E-08
+1.8737E+14 4.1100E-08 9.3000E-09 1.5600E-08
+1.7635E+14 3.5700E-08 8.4000E-09 1.3300E-08

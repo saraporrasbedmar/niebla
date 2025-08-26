@@ -1,0 +1,27 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: lambda
+#   unit: um
+#   datatype: float32
+# - name: nuInu
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: CIB
+# - reference_id: 2009ApJ...707.1729M
+# - observatory: BLAST-Spitzer/IRAC
+# - label: BLAST-Spitzer/IRAC (Marsden+ ‘09)
+# - observable_type: M
+# - comments: "Data formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+lambda nuInu nuInu_errn nuInu_errp
+250 8.6 0.59 0.59
+350 4.93 0.34 0.34
+500 2.27 0.2 0.2

@@ -1,0 +1,26 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: nu
+#   unit: Hz
+#   datatype: float32
+# - name: nuInu
+#   unit: W / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: W / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: W / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: CUB
+# - reference_id: 2005ApJ...619L..11X
+# - observatory: GALEX
+# - label: GALEX (Xu+ '05)
+# - observable_type: IGL
+# - comments: "Data from R. Hill (2018). Formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+nu nuInu nuInu_errn nuInu_errp
+1.9594E+15 1.0300E-09 1.5000E-10 1.5000E-10
+1.2978E+15 2.2500E-09 3.2000E-10 3.2000E-10

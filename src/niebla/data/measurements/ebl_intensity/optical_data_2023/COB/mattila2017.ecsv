@@ -1,0 +1,25 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: lambda
+#   unit: um
+#   datatype: float32
+# - name: nuInu
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: COB
+# - reference_id: 2017MNRAS.470.2152M
+# - observatory: VLT/FORS
+# - label: VLT/FORS (Mattila+ '17)
+# - observable_type: M
+# - comments: "Data formatted by J. Biteau (2022-09). Includes bright galaxies at g < 22 mag - stat only (sys. +20%/-16%?)."
+# schema: astropy-2.0
+lambda nuInu nuInu_errn nuInu_errp
+0.400 13.6 4.5 4.5

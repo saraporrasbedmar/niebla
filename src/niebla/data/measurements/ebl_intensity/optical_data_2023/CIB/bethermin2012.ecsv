@@ -1,0 +1,27 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: lambda
+#   unit: um
+#   datatype: float32
+# - name: nuInu
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: CIB
+# - reference_id: 2012A&A...542A..58B
+# - observatory: Herschel/SPIRE
+# - label: Herschel/SPIRE (Bethermin+ ‘12)
+# - observable_type: IGL
+# - comments: "Data formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+lambda nuInu nuInu_errn nuInu_errp
+250 10.1 2.3 2.6
+350 6.5 1.6 1.7
+500 2.8 0.8 0.9

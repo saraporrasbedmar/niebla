@@ -1,0 +1,32 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: nu
+#   unit: Hz
+#   datatype: float32
+# - name: nuInu
+#   unit: W / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: W / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: W / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: COB
+# - reference_id: 2017PASJ...69...31K
+# - observatory: HST/FOS
+# - label: HST/FOS (Kawara+ ‘17)
+# - observable_type: UL
+# - comments: "Data from R. Hill (2018). Formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+nu nuInu nuInu_errn nuInu_errp
+1.3034E+15 7.8000E-09 7.3000E-09 7.3000E-09
+1.1103E+15 1.4700E-08 2.1000E-09 2.1000E-09
+9.3685E+14 2.6400E-08 4.9000E-09 4.9000E-09
+8.1025E+14 3.9800E-08 9.4000E-09 9.4000E-09
+7.1379E+14 6.0400E-08 1.5500E-08 1.5500E-08
+6.3786E+14 8.0000E-08 2.1500E-08 2.1500E-08
+5.4508E+14 8.1700E-08 2.4500E-08 2.4500E-08
+4.6122E+14 8.5600E-08 2.5100E-08 2.5100E-08

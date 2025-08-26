@@ -1,0 +1,27 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: lambda
+#   unit: nm
+#   datatype: float32
+# - name: nuInu
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: COB
+# - reference_id: 2007ApJ...666..663B
+# - observatory: HST/WFPC2
+# - label: HST/WFPC2 (Bernstein '07) 
+# - observable_type: UL
+# - comments: "Data from S. Driver. Formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+lambda nuInu nuInu_errn nuInu_errp
+298.9 17.9 12.0 12.0
+544.3 54.4 27.2 27.2
+804.5 56.3 32.2 32.2

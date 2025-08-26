@@ -1,0 +1,26 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: lambda
+#   unit: um
+#   datatype: float32
+# - name: nuInu
+#   unit: kJy / sr
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: kJy / sr
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: kJy / sr
+#   datatype: float32
+# meta: !!omap
+# - data_type: CIB
+# - reference_id: 2016ApJ...829...25H
+# - observatory: SCUBA-2
+# - label: SCUBA-2 (Hsu+ ‘16)
+# - observable_type: IGL
+# - comments: "Data formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+lambda nuInu nuInu_errn nuInu_errp
+450 253 44 49
+850 121 13 16

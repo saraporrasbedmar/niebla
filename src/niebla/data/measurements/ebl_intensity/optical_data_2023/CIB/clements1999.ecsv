@@ -1,0 +1,25 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: nu
+#   unit: Hz
+#   datatype: float32
+# - name: nuInu
+#   unit: W / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: W / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: W / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: CIB
+# - reference_id: 1999A&A...346..383C
+# - observatory: ISO/ISOCAM
+# - label: ISO/ISOCAM (Clements+ ‘99)
+# - observable_type: IGL
+# - comments: "Data from R. Hill (2018). Formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+nu nuInu nuInu_errn nuInu_errp
+2.4983E+13 5.0000E-10 1.5000E-10 1.5000E-10

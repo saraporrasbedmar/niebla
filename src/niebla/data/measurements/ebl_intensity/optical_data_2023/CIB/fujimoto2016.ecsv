@@ -1,0 +1,25 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: lambda
+#   unit: um
+#   datatype: float32
+# - name: nuInu
+#   unit: kJy / sr
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: kJy / sr
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: kJy / sr
+#   datatype: float32
+# meta: !!omap
+# - data_type: CIB
+# - reference_id: 2016ApJS..222....1F
+# - observatory: ALMA
+# - label: ALMA (Fujimoto+ ‘16)
+# - observable_type: IGL
+# - comments: "Data formatted by J. Biteau (2022-11)."
+# schema: astropy-2.0
+lambda nuInu nuInu_errn nuInu_errp
+1200 75 18 22

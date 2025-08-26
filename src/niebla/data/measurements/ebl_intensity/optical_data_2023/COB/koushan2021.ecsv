@@ -1,0 +1,33 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: lambda
+#   unit: um
+#   datatype: float32
+# - name: nuInu
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: COB
+# - reference_id: 2021MNRAS.503.2033K
+# - observatory: GAMA-DEVILS-HST
+# - label: GAMA-DEVILS-HST (Koushan+ '21) 
+# - observable_type: IGL
+# - comments: "Data from S. Driver. Formatted by J. Biteau (2022-09). Superseeds driver2016 in 0.35-2.2um."
+# schema: astropy-2.0
+lambda nuInu nuInu_errn nuInu_errp
+0.3577 4.130 0.284 0.284
+0.4744 5.760 0.232 0.232
+0.6312 8.110 0.331 0.331
+0.7584 9.940 0.441 0.441
+0.8833 10.710 0.557 0.557
+1.0224 11.580 0.523 0.523
+1.2546 11.220 0.552 0.552
+1.6477 11.170 0.528 0.528
+2.1549 9.420 0.491 0.491

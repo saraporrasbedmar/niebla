@@ -1,0 +1,25 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: lambda
+#   unit: um
+#   datatype: float32
+# - name: nuInu
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: COB
+# - reference_id: 2022ApJ...927L...8L
+# - observatory: New Horizons/LORRI
+# - label: NH/LORRI (Postman+ ‘24)
+# - observable_type: UL
+# - comments: "Data formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+lambda nuInu nuInu_errn nuInu_errp
+0.608 11.16 1.65 1.65

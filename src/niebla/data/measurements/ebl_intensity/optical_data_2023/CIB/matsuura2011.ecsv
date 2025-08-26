@@ -1,0 +1,28 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: nu
+#   unit: Hz
+#   datatype: float32
+# - name: nuInu
+#   unit: W / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: W / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: W / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: CIB
+# - reference_id: 2011ApJ...737....2M
+# - observatory: AKARI
+# - label: AKARI (Matsuura+ ‘11)
+# - observable_type: UL
+# - comments: "Data from R. Hill (2018). Formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+nu nuInu nuInu_errn nuInu_errp
+4.6122E+12 1.2453E-08 1.0608E-08 1.0608E-08
+3.3310E+12 2.2318E-08 6.3289E-09 6.3289E-09
+2.1414E+12 2.0129E-08 4.4969E-09 4.4969E-09
+1.8737E+12 1.3678E-08 4.6843E-09 4.6843E-09

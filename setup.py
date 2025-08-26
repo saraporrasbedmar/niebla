@@ -29,7 +29,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/guides/single-sourcing-package-version/
-    version="0.0.10",  # Required
+    version="0.0.11",  # Required
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
@@ -110,7 +110,8 @@ setup(
     install_requires=[
         'numpy >= 1.19',
         'scipy >= 1.5',
-        'astropy >= 4.0',],  # Optional
+        'astropy >= 4.0',
+        'matplotlib'],  # Optional
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
     # syntax, for example:

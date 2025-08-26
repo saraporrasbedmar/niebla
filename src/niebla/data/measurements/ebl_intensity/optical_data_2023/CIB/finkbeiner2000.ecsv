@@ -1,0 +1,26 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: nu
+#   unit: Hz
+#   datatype: float32
+# - name: nuInu
+#   unit: W / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: W / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: W / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: CIB
+# - reference_id: 2000ApJ...544...81F
+# - observatory: COBE/DIRBE
+# - label: COBE/DIRBE (Finkbeiner+ ‘00)
+# - observable_type: UL
+# - comments: "Data from R. Hill (2018). Formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+nu nuInu nuInu_errn nuInu_errp
+4.9965E+12 2.8100E-08 8.8000E-09 8.8000E-09
+2.9979E+12 2.4600E-08 1.0500E-08 1.0500E-08

@@ -1,0 +1,30 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: nu
+#   unit: GHz
+#   datatype: float32
+# - name: nuInu
+#   unit: MJy / sr
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: MJy / sr
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: MJy / sr
+#   datatype: float32
+# meta: !!omap
+# - data_type: CIB
+# - reference_id: 2019ApJ...877...40O
+# - observatory: Planck/HFI-COBE/FIRAS
+# - label: Planck/HFI-COBE/FIRAS (Odegard+ '19)
+# - observable_type: M
+# - comments: "Data formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+nu nuInu nuInu_errn nuInu_errp
+100 0.007 0.014 0.014
+143 0.010 0.019 0.019
+217 0.060 0.023 0.023
+353 0.149 0.017 0.017
+545 0.371 0.018 0.018
+857 0.576 0.034 0.034

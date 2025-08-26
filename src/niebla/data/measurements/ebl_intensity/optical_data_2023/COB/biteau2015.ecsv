@@ -1,0 +1,32 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: lambda
+#   unit: um
+#   datatype: float32
+# - name: nuInu
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: COB
+# - reference_id: 2015ApJ...812...60B
+# - observatory: HESS, MAGIC, VERITAS
+# - label: HESS, MAGIC, VERITAS (Biteau \& Williams '15) 
+# - observable_type: M
+# - comments: "Data formatted by J. Biteau (2022-1)."
+# schema: astropy-2.0
+lambda nuInu nuInu_errn nuInu_errp
+0.38 7.40 3.70 3.70
+0.8 12.40 1.90 1.90
+1.7 10.80 0.80 0.80
+3.6 6.70 0.70 0.70
+7.6 0.95 0.53 0.53
+16 3.79 0.26 0.26
+34 3.14 0.25 0.25
+72 9.8 1.1 1.1

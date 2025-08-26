@@ -1,0 +1,27 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: lambda
+#   unit: um
+#   datatype: float32
+# - name: nuInu
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: COB
+# - reference_id: 2013APh....43..112D
+# - observatory: COBE/DIRBE-2MASS
+# - label: COBE/DIRBE-2MASS (Levenson '07) 
+# - observable_type: UL
+# - comments: "Data re-calibrated by Dwek & Krennrich 2012. Formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+lambda nuInu nuInu_errn nuInu_errp
+1.25 21 15 15
+2.20 20 6 6
+3.50 13.3 2.8 2.8

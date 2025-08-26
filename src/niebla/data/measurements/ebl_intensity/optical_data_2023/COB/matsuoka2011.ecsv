@@ -1,0 +1,26 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: lambda
+#   unit: um
+#   datatype: float32
+# - name: nuInu
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: COB
+# - reference_id: 2011ApJ...736..119M
+# - observatory: Pioneer 10/11 IPP
+# - label: Pioneer/IPP (Matsuoka+ '17)
+# - observable_type: UL
+# - comments: "Formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+lambda nuInu nuInu_errn nuInu_errp
+0.44 7.9 4.0 4.0
+0.64 7.7 5.8 5.8

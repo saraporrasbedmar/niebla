@@ -1,0 +1,45 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: lambda
+#   unit: um
+#   datatype: float32
+# - name: nuInu
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: nW / (m2 sr)
+#   datatype: float32
+# meta: !!omap
+# - data_type: COB
+# - reference_id: 2016ApJ...827..108D
+# - observatory: GAMA-COSMOS/G10-HST
+# - label: GAMA-COSMOS/G10-HST (Driver+ '16) 
+# - observable_type: IGL
+# - comments: "Data from S. Driver. Formatted by J. Biteau (2022-09)."
+# schema: astropy-2.0
+lambda nuInu nuInu_errn nuInu_errp
+0.1535 1.454 0.270 0.270
+0.225 3.154 0.673 0.673
+0.3557 4.031 0.769 0.769
+0.4702 5.362 0.933 0.933
+0.6175 7.472 1.125 1.125
+0.7491 9.548 1.431 1.431
+0.8946 10.152 1.504 1.504
+1.0213 10.441 1.615 1.615
+1.2525 10.378 1.527 1.527
+1.6433 10.123 1.534 1.534
+2.1503 8.720 1.248 1.248
+3.544 5.167 0.761 0.761
+4.487 3.602 0.514 0.514
+7.841 2.449 1.114 1.114
+23.675 3.007 0.317 0.317
+70.89 6.903 1.366 1.366
+101 10.216 1.987 1.987
+161 13.145 2.792 2.792
+249 10.003 2.111 2.111
+357 5.827 1.848 1.848
+504 2.461 2.462 2.462

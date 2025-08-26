@@ -1,0 +1,26 @@
+# %ECSV 0.9
+# ---
+# datatype:
+# - name: nu
+#   unit: um
+#   datatype: float32
+# - name: nuInu
+#   unit: MJy / sr
+#   datatype: float32
+# - name: nuInu_errn
+#   unit: MJy / sr
+#   datatype: float32
+# - name: nuInu_errp
+#   unit: MJy / sr
+#   datatype: float32
+# meta: !!omap
+# - data_type: CIB
+# - reference_id: 2009A&A...500..763J
+# - observatory: ISO/ISOPHOT-Effelsberg
+# - label: ISO/ISOPHOT-Effelsberg (Juvela+ '09)
+# - observable_type: M
+# - comments: "Data formatted by J. Biteau (2022-11)."
+# schema: astropy-2.0
+nu nuInu nuInu_errn nuInu_errp
+150 0.83 0.41 0.41
+180 1.26 0.37 0.37

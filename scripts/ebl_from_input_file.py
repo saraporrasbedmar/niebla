@@ -9,13 +9,9 @@ import matplotlib.pyplot as plt
 from astropy.constants import c
 
 
-# from niebla import ebl_model
-from src.niebla import ebl_model
-
-# from data.cb_measurs.import_cb_measurs import import_cb_data
-# from data.emissivity_measurs.emissivity_read_data import emissivity_data
-# from data.sfr_measurs.sfr_read import *
-# from data.metallicity_measurs.import_metall import import_met_data
+from niebla import ebl_model, measurements
+# from src.niebla import ebl_model
+# import src.niebla.measurements as measurements
 
 # from ebltable.ebl_from_model import EBL
 
@@ -81,17 +77,26 @@ ebl_class = ebl_model.EBL_model.input_yaml_data_into_class(
 # FIGURE: METALLICITIES FOR DIFFERENT MODELS ---------------------------
 fig_met, ax_met = plt.subplots(figsize=(8, 8))
 plt.yscale('log')
-# aa = import_met_data(ax=ax_met)
-# aa = import_met_data(ax=ax_met, z_sun=0.014)
+measurements.metallicity(ax=ax_met)
+measurements.metallicity(ax=ax_met, z_sun=0.014, color='b')
 
 plt.xlabel('redshift z')
 plt.ylabel('Z')
 
 # FIGURE: COB FOR DIFFERENT MODELS -------------------------------------
 fig_cob, ax_cob = plt.subplots(figsize=(10, 8))
+# This command is necessary because we create the legend in a
+# subroutine, so pyplot does not recognize it straight away
+plt.tight_layout()
 
 waves_ebl = np.logspace(-1, 3, num=205)
 freq_array_ebl = c.value / (waves_ebl * 1e-6)
+
+measurements.ebl(
+    lambda_min_total=0.08, fig=fig_cob, ax=ax_cob,
+    colors_UL=['grey'], plot_UL=True, plot_IGL=True,
+    show_legend=True)
+
 
 # Axion component calculation
 
@@ -100,19 +105,24 @@ wv_alp, int_alp = ebl_class.ebl_axion_calculation(
     axion_mass=float(config_data['axion_params']['axion_mass']),
     axion_gayy=float(config_data['axion_params']['axion_gamma'])
 )
-plt.loglog(wv_alp, int_alp,
-           linestyle=models[3], color='k', marker='.')
+plt.loglog(wv_alp, int_alp, linestyle=models[3], color='k',
+           label=r'$m_a=$%s eV  $g_{a \gamma} = %s $ GeV$^{-1}$'
+                 % (config_data['axion_params']['axion_mass'],
+                    config_data['axion_params']['axion_gamma']))
 
 wv_alp, int_alp = ebl_class.ebl_axion_calculation(
     wavelength=waves_ebl, zz_array=0.,
-    axion_mass=float(config_data['axion_params']['axion_mass']),
-    axion_gayy=float(config_data['axion_params']['axion_gamma']),
-    factor=0.5)
-plt.loglog(wv_alp, int_alp,
-           linestyle=models[3], color='r', marker='.')
+    axion_mass=10., axion_gayy=1e-11)
+plt.loglog(wv_alp, int_alp, linestyle=models[3], color='r',
+           label=r'$m_a=10$eV  $g_{a \gamma} = 1e-11$ GeV$^{-1}$')
 
-plt.axvline(2.47968397 / config_data['axion_params']['axion_mass'])
-# plt.show()
+legend22 = plt.legend(loc=3,# bbox_to_anchor=(0.5, 0.1),
+                      title=r'Cosmic ALP decay',
+                      fontsize=14, title_fontsize=16, framealpha=0.95)
+
+fig_cob.savefig(input_file_dir + '/ebl_bare1' + '.png',
+                bbox_inches='tight')
+
 # Intrahalo component calculation
 # ebl_class.ebl_intrahalo_calculation(float(
 #                                       config_data['ihl_params']['A_ihl']),
@@ -123,12 +133,12 @@ plt.axvline(2.47968397 / config_data['axion_params']['axion_mass'])
 # linestyle=models[2], color='k')
 plt.figure()
 
-# emiss_data = emissivity_data(z_min=None, z_max=None,
-#                     lambda_min=0., lambda_max=3e3,
-#                     take1ref=None, plot_fig=False)
-# plt.scatter(x=emiss_data['lambda'], y=emiss_data['z'],
-#             c=np.log10(emiss_data['eje']),
-#             cmap='viridis')
+emiss_data = measurements.emissivity(z_min=None, z_max=None,
+                    lambda_min=0., lambda_max=3e3,
+                    take_only_refs=None, plot=False)
+plt.scatter(x=emiss_data['lambda'], y=emiss_data['z'],
+            c=np.log10(emiss_data['eje']),
+            cmap='viridis')
 
 plt.xscale('log')
 plt.yscale('log')
@@ -136,11 +146,11 @@ plt.yscale('log')
 fig_emiss_lambda, (ax_emiss_lambda0, ax_emiss_lambda1) = plt.subplots(
     2, 1, figsize=(10, 14))
 plt.subplot(211)
-# for nz, zz in enumerate(np.unique(emiss_data['z'])):
-#     ax_emiss_lambda0.scatter(x=emiss_data['lambda'][emiss_data['z'] == zz],
-#                 y=emiss_data['eje'][emiss_data['z'] == zz],
-#             color=plt.cm.CMRmap(nz / float(len(np.unique(emiss_data['z'])))),
-#                 )
+for nz, zz in enumerate(np.unique(emiss_data['z'])):
+    ax_emiss_lambda0.scatter(x=emiss_data['lambda'][emiss_data['z'] == zz],
+                y=emiss_data['eje'][emiss_data['z'] == zz],
+            color=plt.cm.CMRmap(nz / float(len(np.unique(emiss_data['z'])))),
+                )
 
 ax_emiss_lambda0.set_xscale('log')
 ax_emiss_lambda0.set_yscale('log')
@@ -170,10 +180,11 @@ for n_lambda, ll in enumerate([0.15, 0.17, 0.28,
                                0.44, 0.55, 0.79,
                                1.22, 2.2, 3.6,
                                4.5, 5.8, 8.0]):
-    plt.subplot(4, 3, n_lambda + 1)
-    # emissivity_data(z_min=None, z_max=None,
-    #                 lambda_min=ll - 0.05, lambda_max=ll + 0.05,
-    #                 take1ref=None, plot_fig=True)
+    ax = plt.subplot(4, 3, n_lambda + 1)
+    measurements.emissivity(
+        z_min=None, z_max=None,
+        lambda_min=ll - 0.05, lambda_max=ll + 0.05,
+        plot=True, ax=ax)
 
     # if n_lambda != 8:
     plt.annotate(r'%r$\,\mu m$' % ll, xy=(5, 1e35), fontsize=28)
@@ -221,8 +232,8 @@ z_data = np.linspace(float(config_data['redshift_array']['z_min']),
                      float(config_data['redshift_array']['z_max']),
                      num=500)
 
-# sfr_data = sfr_data_dict()
-# plot_sfr_data(sfr_data)
+sfr_data = measurements.sfr(plot=True, ax=ax_sfr)
+
 
 plt.yscale('log')
 plt.ylabel('sfr(z)')
@@ -268,36 +279,35 @@ for nkey, key in enumerate(config_data['ssp_models']):
           21.98 - ebl_class.ebl_ssp_spline(0.608, 0.))
     # print('%.3f' % (memory_usage_psutil()))
 
-    ax_cob.plot(waves_ebl, ebl_class.ebl_ssp_spline(
-        waves_ebl, 0.),
+    ax_cob.plot(waves_ebl, ebl_class.ebl_ssp_spline(waves_ebl, 0.),
                 linestyle='-', color=colors[nkey % len(colors)],
                 lw=2,
                 # markersize=16, marker=markers[nkey]
                 )
 
-    # plt.figure(fig_emiss_lambda)
-    # for nz, zz in enumerate(np.unique(emiss_data['z'])):
-    #     plt.subplot(211)
-    #     ax_emiss_lambda0.plot(waves_ebl, ebl_class.emiss_ssp_spline(
-    #                  waves_ebl, zz) * freq_array_ebl * 1e-7,
-    #                 color=plt.cm.CMRmap(
-    #                     nz / float(len(np.unique(emiss_data['z'])))),
-    #                 zorder=0, alpha=0.75, ls=linstyles_ssp[nkey])
-    #     freq_arr_emiss = (3e8*1e6/emiss_data['lambda'][emiss_data['z'] == zz])
-    #
-    #     plt.subplot(212)
-    #     plt.plot(
-    #         emiss_data['lambda'][emiss_data['z'] == zz],
-    #         (ebl_class.emiss_ssp_spline(
-    #             emiss_data['lambda'][emiss_data['z'] == zz], zz)
-    #            * freq_arr_emiss * 1e-7
-    #            - emiss_data['eje'][emiss_data['z'] == zz])
-    #           / ((emiss_data['eje_n'][emiss_data['z'] == zz]
-    #               + emiss_data['eje_p'][emiss_data['z'] == zz]) / 2.),
-    #                 color=plt.cm.CMRmap(
-    #                     nz / float(len(np.unique(emiss_data['z'])))),
-    #         ls='', marker=markers[nkey]
-    #                 )
+    plt.figure(fig_emiss_lambda)
+    for nz, zz in enumerate(np.unique(emiss_data['z'])):
+        plt.subplot(211)
+        ax_emiss_lambda0.plot(waves_ebl, ebl_class.emiss_ssp_spline(
+                     waves_ebl, zz) * freq_array_ebl * 1e-7,
+                    color=plt.cm.CMRmap(
+                        nz / float(len(np.unique(emiss_data['z'])))),
+                    zorder=0, alpha=0.75, ls=linstyles_ssp[nkey])
+        freq_arr_emiss = (3e8*1e6/emiss_data['lambda'][emiss_data['z'] == zz])
+
+        plt.subplot(212)
+        plt.plot(
+            emiss_data['lambda'][emiss_data['z'] == zz],
+            (ebl_class.emiss_ssp_spline(
+                emiss_data['lambda'][emiss_data['z'] == zz], zz)
+               * freq_arr_emiss * 1e-7
+               - emiss_data['eje'][emiss_data['z'] == zz])
+              / ((emiss_data['eje_n'][emiss_data['z'] == zz]
+                  + emiss_data['eje_p'][emiss_data['z'] == zz]) / 2.),
+                    color=plt.cm.CMRmap(
+                        nz / float(len(np.unique(emiss_data['z'])))),
+            ls='', marker=markers[nkey]
+                    )
 
     plt.figure(fig_emiss_z)
     for n_lambda, ll in enumerate([0.15, 0.17, 0.28,
@@ -415,7 +425,6 @@ for nkey, key in enumerate(config_data['ssp_models']):
 
 # print('%.3f' %(memory_usage_psutil()))
 plt.figure(fig_cob)
-# import_cb_data(plot_measurs=True, ax1=ax_cob, lambda_max_total=1000)
 
 # We introduce the Finke22 and CUBA splines
 # ebl = {}
@@ -437,35 +446,24 @@ plt.xscale('log')
 plt.xlabel(r'Wavelength (µm)')
 plt.ylabel(r'$\nu I_{\nu}$ (nW / m$^2$ sr)')
 
-# legend11 = plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left",
-#                       title=r'Measurements')
-# legend22 = plt.legend([
-#     plt.Line2D([], [], linewidth=2, linestyle=models[i],
-#                color='k') for i in range(4)],
-#     ['Total', 'SSP', 'IHL', 'Axion decay'
-#                             '\n(example)'
-#                             '\n'
-#                             r'    m$_a = 1$ eV'
-#                             '\n'
-#                             r'    g$_{a\gamma} = 5 \cdot 10^{-10}$ GeV$^{'
-#                             r'-1}$'], loc=4,
-#     title=r'Components')
-legend33 = ax_cob.legend([plt.Line2D([], [], linewidth=2, linestyle='-',
-                                     color=colors[i])
-                          for i in range(len(config_data['ssp_models']))],
-                         [config_data['ssp_models'][key]['name']
-                          for key in config_data['ssp_models']],
-                         title=r'SSP models',  # bbox_to_anchor=(1.04, 0.1),
-                         loc=4, ncol=2, fontsize=14
-                         )
-# axes.add_artist(legend11)
-# axes.add_artist(legend22)
-ax_cob.add_artist(legend33)
+legend33 = plt.legend(
+    [plt.Line2D([], [], linewidth=2, linestyle='-', color=colors[i])
+     for i in range(len(config_data['ssp_models']))],
+    [config_data['ssp_models'][key]['name']
+     for key in config_data['ssp_models']],
+    title=r'SSP models',
+    # bbox_to_anchor=(0.99, 0.01),
+    loc=4, ncol=2, fontsize=14, framealpha=0.95
+)
+
+# ax_ssp.add_artist(legend11)
+ax_cob.add_artist(legend22)
+
 
 plt.xlim([.1, 1000])
 plt.ylim(1e-2, 100)
 
-ax_sfr.legend()
+ax_sfr.legend(loc=3)
 ax_met.legend()
 print(previous_ssp)
 
@@ -497,7 +495,6 @@ plt.xscale('log')
 plt.ylim(0., 1.1)
 plt.xlim(0.05, 10)
 
-# Save the figures
 fig_cob.savefig(input_file_dir + '/ebl_bare' + '.png',
                 bbox_inches='tight')
 fig_cob.savefig(input_file_dir + '/ebl_bare' + '.pdf',

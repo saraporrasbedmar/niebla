@@ -3,7 +3,7 @@ niebla
 
 Python package to compute the EBL with a forward folding approach.
 
-![](src/niebla/data/logo_small.png)
+![logo](src/niebla/data/logo_small.png)
 
 Prerequisites
 -------------

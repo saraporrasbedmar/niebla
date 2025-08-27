@@ -130,9 +130,11 @@ legend22 = plt.legend(loc=3,# bbox_to_anchor=(0.5, 0.1),
 # linestyle=models[2], color='k')
 plt.figure()
 
-emiss_data = measurements.emissivity(z_min=None, z_max=None,
-                    lambda_min=0., lambda_max=3e3,
-                    take_only_refs=None, plot=False)
+emiss_data = measurements.emissivity(
+    z_min=None, z_max=None,
+    lambda_min=0., lambda_max=3e3,
+    take_only_refs=None, plot=False)
+
 plt.scatter(x=emiss_data['lambda'], y=emiss_data['z'],
             c=np.log10(emiss_data['eje']),
             cmap='viridis')
@@ -454,7 +456,7 @@ legend33 = plt.legend(
      for key in config_data['ssp_models']],
     title=r'SSP models',
     # bbox_to_anchor=(0.99, 0.01),
-    loc=4, ncol=2, fontsize=14, framealpha=0.9
+    loc=4, ncol=1, fontsize=14, framealpha=0.9
 ).set_zorder(200)
 
 # ax_ssp.add_artist(legend11)

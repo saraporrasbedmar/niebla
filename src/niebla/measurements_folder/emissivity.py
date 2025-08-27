@@ -53,16 +53,17 @@ def emissivity(z_min=None, z_max=None, lambda_min=0,
     if plot:
         list_references = np.unique(data['reference'])
 
+        if colors is None:
+            prop_cycle = plt.rcParams['axes.prop_cycle']
+            colors = prop_cycle.by_key()['color']
+
         if show_legend:
             handles = []
             labels = []
 
         for nref, ref in enumerate(list_references):
 
-            if colors is None:
-                color_i = next(ax._get_lines.prop_cycler)['color']
-            else:
-                color_i = colors[nref % len(colors)]
+            color_i = colors[nref % len(colors)]
 
             data_individual = data[data['reference'] == ref]
 

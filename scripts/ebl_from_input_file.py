@@ -120,9 +120,6 @@ legend22 = plt.legend(loc=3,# bbox_to_anchor=(0.5, 0.1),
                       title=r'Cosmic ALP decay',
                       fontsize=14, title_fontsize=16, framealpha=0.95)
 
-fig_cob.savefig(input_file_dir + '/ebl_bare1' + '.png',
-                bbox_inches='tight')
-
 # Intrahalo component calculation
 # ebl_class.ebl_intrahalo_calculation(float(
 #                                       config_data['ihl_params']['A_ihl']),
@@ -453,8 +450,8 @@ legend33 = plt.legend(
      for key in config_data['ssp_models']],
     title=r'SSP models',
     # bbox_to_anchor=(0.99, 0.01),
-    loc=4, ncol=2, fontsize=14, framealpha=0.95
-)
+    loc=4, ncol=2, fontsize=14, framealpha=0.9
+).set_zorder(200)
 
 # ax_ssp.add_artist(legend11)
 ax_cob.add_artist(legend22)
@@ -530,4 +527,4 @@ fig_dustabs.savefig(
     input_file_dir + '/dustabs' + '.pdf',
     bbox_inches='tight')
 
-# plt.show()
+plt.show()

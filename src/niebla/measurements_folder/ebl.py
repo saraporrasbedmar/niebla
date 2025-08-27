@@ -353,20 +353,20 @@ def ebl(lambda_min_total=0., lambda_max_total=1e4,
     labels = []
 
     if plot_UL:
+        if colors_UL is None:
+            prop_cycle = plt.rcParams['axes.prop_cycle']
+            colors_UL = prop_cycle.by_key()['color']
+
+        if colors_nh is None:
+            prop_cycle = plt.rcParams['axes.prop_cycle']
+            colors_nh = prop_cycle.by_key()['color']
 
         for ni, name in enumerate(names_all_upper):
             data_total = upper_lims_all[upper_lims_all['ref'] == name]
             type_i = np.unique(data_total['type'])
 
-            if colors_UL is None:
-                color_i = next(ax._get_lines.prop_cycler)['color']
-            else:
-                color_i = colors_UL[ni % len(colors_UL)]
-
-            if colors_nh is None:
-                color_ni = next(ax._get_lines.prop_cycler)['color']
-            else:
-                color_ni = colors_nh[ni % len(colors_nh)]
+            color_i = colors_UL[ni % len(colors_UL)]
+            color_ni = colors_nh[ni % len(colors_nh)]
 
             for datatype in type_i:
                 data = data_total[data_total['type'] == datatype]
@@ -471,14 +471,15 @@ def ebl(lambda_min_total=0., lambda_max_total=1e4,
                     )
             i += 1
 
+    if colors_IGL is None:
+        prop_cycle = plt.rcParams['axes.prop_cycle']
+        colors_IGL = prop_cycle.by_key()['color']
+
     if plot_IGL:
         for ni, name in enumerate(names_all_lower):
             data = lowerlimits_all[lowerlimits_all['ref'] == name]
 
-            if colors_IGL is None:
-                color_i = next(ax._get_lines.prop_cycler)['color']
-            else:
-                color_i = colors_IGL[ni % len(colors_IGL)]
+            color_i = colors_IGL[ni % len(colors_IGL)]
 
             ax.errorbar(
                 x=data['lambda'], y=data['nuInu'],

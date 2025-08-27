@@ -109,13 +109,14 @@ def sfr(plot=True, ax=None,
         handles = []
         labels = []
 
+        if colors is None:
+            prop_cycle = plt.rcParams['axes.prop_cycle']
+            colors = prop_cycle.by_key()['color']
+
         for nref, ref in enumerate(refs):
             dict_values = dict_srd[dict_srd['Reference'] == ref]
 
-            if colors is None:
-                color_i = next(ax._get_lines.prop_cycler)['color']
-            else:
-                color_i = colors[nref % len(colors)]
+            color_i = colors[nref % len(colors)]
 
             ax.errorbar(
                 x=dict_values['z_value'],

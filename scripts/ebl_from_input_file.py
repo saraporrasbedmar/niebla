@@ -262,7 +262,6 @@ zz_dustabs = np.array([0, 2, 4, 6])
 color_dustabs = []
 
 # print('%.3f' %(memory_usage_psutil()))
-# ebl_class.logging_prints = False
 
 # SSPs component calculation (all models listed in the input file)
 for nkey, key in enumerate(config_data['ssp_models']):
@@ -347,20 +346,25 @@ for nkey, key in enumerate(config_data['ssp_models']):
 
     color_ssp = ['b', 'orange', 'k', 'r', 'green', 'grey', 'limegreen',
                  'purple', 'brown']
-    #
+
     if ('path_ssp' not in config_data['ssp_models'][key]['ssp']
             or
             config_data['ssp_models'][key]['ssp']['path_ssp']
             not in previous_ssp):
+        # Check so the examples are only plotted once
+        if (config_data['ssp_models'][key]['ssp']['ssp_type']
+                in previous_ssp):
+            continue
         try:
             previous_ssp.append(
                 config_data['ssp_models'][key]['ssp']['path_ssp'])
             labels_ssp2.append(
-                config_data['ssp_models'][key]['ssp']['path_ssp'].replace(
-                    'data/ssp_synthetic_spectra/', ''))
+                config_data['ssp_models'][key]['ssp']['path_ssp'])
         except KeyError:
-            previous_ssp.append(key)
-            labels_ssp2.append(key)
+            previous_ssp.append(
+                config_data['ssp_models'][key]['ssp']['ssp_type'])
+            labels_ssp2.append(
+                config_data['ssp_models'][key]['ssp']['ssp_type'])
 
         handles_ssp2.append(
             plt.Line2D([], [], linewidth=2,
@@ -466,13 +470,15 @@ print(previous_ssp)
 
 plt.figure(fig_ssp)
 legend11 = plt.legend(handles_ssp1, labels_ssp1,
-                      loc=1,
-                      title=r'Age log10(years)')
-legend22 = plt.legend(handles_ssp2, labels_ssp2,
                       loc=4,
+                      title=r'Age (log$_{10}$(years))')
+legend22 = plt.legend(handles_ssp2, labels_ssp2,
+                      loc=1,
                       )
 ax_ssp.add_artist(legend11)
 ax_ssp.add_artist(legend22)
+
+plt.ylim(bottom=0)
 
 plt.figure(fig_dustabs)
 

@@ -55,7 +55,6 @@ class EBL_model(object):
         :return: class
             The EBL calculation class.
         """
-        print(yaml_data['redshift_array'])
         z_array = np.geomspace(
             1e-6,
             yaml_data['redshift_array']['z_max'],
@@ -221,7 +220,7 @@ class EBL_model(object):
     def t2z(self, tt):
         return 10 ** self._t2z(tt)
 
-    def read_SSP_file(self, yaml_file):
+    def read_SSP_file(self, yaml_file_input):
         """
         Read Simple Stellar Population model spectra.
 
@@ -237,6 +236,7 @@ class EBL_model(object):
         log10(new total mass).
 
         """
+        yaml_file = yaml_file_input.copy()
         if yaml_file['ssp_type'] == 'example_SB99':
             path_ssp = (
                     data_path

@@ -272,7 +272,7 @@ class EBL_model(object):
             yaml_file['L_lambda'] = True
 
         else:
-            path_ssp = data_path + yaml_file['path_ssp']
+            path_ssp = yaml_file['path_ssp']
 
         if yaml_file['ssp_type'] == 'SB99':
 

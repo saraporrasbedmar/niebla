@@ -11,7 +11,6 @@ import astropy.constants as c
 from src.niebla.safe_log10 import log10_safe
 
 data_path = os.path.join(os.path.split(__file__)[0], 'data/')
-print("data_path", data_path)
 
 def _dust_reem_chary2001(wave_array, l_tir_array, metall_array,
             params, verbose=True):

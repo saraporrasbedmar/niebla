@@ -60,6 +60,16 @@ def dust_abs_fraction(wv_array, z_array=0.,
     else:
         dust_att = np.zeros([np.shape(wv_array)[0], np.shape(z_array)[0]])
 
+    if callable(models):
+        if dust_params is None:
+            zz, ww = np.meshgrid(z_array, wv_array)
+            dust_att += models(ww, zz)
+            return np.maximum(np.minimum(dust_att, 1.), 0.)
+        else:
+            zz, ww = np.meshgrid(z_array, wv_array)
+            dust_att += models(ww, zz, dust_params)
+            return np.maximum(np.minimum(dust_att, 1.), 0.)
+
     # The absorption models are defined in one definition
     if len(models) == 1 or type(models) == str:
         if len(models) == 1:
@@ -76,10 +86,13 @@ def dust_abs_fraction(wv_array, z_array=0.,
         else:
             if type(models) == str:
                 try:
-                    return eval(models,
-                                {'zz': z_array,
-                                 'wv': wv_array,
-                                 'params': dust_params})
+                    zz, ww = np.meshgrid(z_array, wv_array)
+                    dust_att += eval(
+                        models,
+                        {'wv': ww,
+                         'zz': zz,
+                         'params': dust_params})
+                    return np.maximum(np.minimum(dust_att, 1.), 0.)
                 except NameError:
                     raise NameError(
                         '   -> No dust absorption dependency with either'
@@ -93,12 +106,6 @@ def dust_abs_fraction(wv_array, z_array=0.,
                         + '\'metall_model\': ' + str(models) + '\n'
                         + '\'dust_params\': ' + str(dust_params)
                     )
-
-            elif callable(models):
-                if dust_params is None:
-                    return models(wv_array, z_array)
-                else:
-                    return models(wv_array, z_array, dust_params)
 
     # The absorption models for wavelength and redshift are not defined
     # together

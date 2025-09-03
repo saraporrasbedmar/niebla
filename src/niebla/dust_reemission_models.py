@@ -125,8 +125,10 @@ def _dust_reem_custom(wave_array, l_tir_array, metall_array,
 
     elif type(dust_reem_model) == str:
 
-        ssp_metall = np.sort(np.array(
-                os.listdir(dust_reem_model), dtype=float))
+        aa = os.listdir(dust_reem_model)
+        if '.ipynb_checkpoints' in aa:
+            aa.remove('.ipynb_checkpoints')
+        ssp_metall = np.sort(np.array(aa, dtype=float))
 
         # Open one of the files and check for wavelengths and Ltir
         data_generic = np.loadtxt(

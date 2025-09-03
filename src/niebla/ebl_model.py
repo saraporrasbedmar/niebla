@@ -341,8 +341,10 @@ class EBL_model(object):
             This method assumes that all files share the wavelength and
             age array.
             """
-            ssp_metall = np.sort(np.array(
-                os.listdir(path_ssp), dtype=float))
+            aa = os.listdir(path_ssp)
+            if '.ipynb_checkpoints' in aa:
+                aa.remove('.ipynb_checkpoints')
+            ssp_metall = np.sort(np.array(aa, dtype=float))
 
             # Open one of the files and check for time steps and frequencies
             data_generic = np.loadtxt(

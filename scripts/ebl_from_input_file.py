@@ -182,7 +182,7 @@ for n_lambda, ll in enumerate([0.15, 0.17, 0.28,
     ax = plt.subplot(4, 3, n_lambda + 1)
     measurements.emissivity(
         z_min=None, z_max=None,
-        lambda_min=ll - 0.05, lambda_max=ll + 0.05,
+        lambda_min=ll - 0.01, lambda_max=ll + 0.01,
         plot=True, ax=ax)
 
     # if n_lambda != 8:

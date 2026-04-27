@@ -507,10 +507,22 @@ class EBL_model(object):
         self.logging_info('SSP emissivity: set dust absorption')
 
         # Dust reemission loading ------------------------------------
+
         if (yaml_data['dust_reem'] is True
                 and
                 yaml_data['dust_reem_parametrization']['library']
                 != 'black_bodies'):
+
+            if (yaml_data['dust_reem_parametrization']['library']
+                != 'dust_reem_chary2001'):
+                print(
+                    '\nWarning: the software does not check for'
+                    ' consistency\n'
+                    'between the IMFs of the SSP and the dust reemission'
+                    ' template.\n'
+                    'It is the responsability of the user to ensure '
+                    'they are compatible.\n')
+
             self.logging_info('Dust reem: enter')
 
             lumin_abs = (

@@ -8,7 +8,10 @@ from astropy.io import fits
 from astropy import units as u
 import astropy.constants as c
 
-from src.niebla.safe_log10 import log10_safe
+try:
+    from src.niebla.safe_log10 import log10_safe
+except ModuleNotFoundError:
+    from niebla.safe_log10 import log10_safe
 
 data_path = os.path.join(os.path.split(__file__)[0], 'data/')
 

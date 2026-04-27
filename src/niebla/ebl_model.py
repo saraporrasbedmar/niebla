@@ -14,11 +14,20 @@ from astropy import units as u
 import astropy.constants as c
 from astropy.cosmology import FlatLambdaCDM
 
-from src.niebla.safe_log10 import log10_safe
-from src.niebla.sfr_models import sfr_model
-from src.niebla.metall_models import metall_model
-from src.niebla.dust_absorption_models import dust_abs_fraction
-from src.niebla.dust_reemission_models import dust_reem
+try:
+    from src.niebla.safe_log10 import log10_safe
+    from src.niebla.safe_log10 import log10_safe
+    from src.niebla.sfr_models import sfr_model
+    from src.niebla.metall_models import metall_model
+    from src.niebla.dust_absorption_models import dust_abs_fraction
+    from src.niebla.dust_reemission_models import dust_reem
+except ModuleNotFoundError:
+    from niebla.safe_log10 import log10_safe
+    from niebla.safe_log10 import log10_safe
+    from niebla.sfr_models import sfr_model
+    from niebla.metall_models import metall_model
+    from niebla.dust_absorption_models import dust_abs_fraction
+    from niebla.dust_reemission_models import dust_reem
 
 try:
     from hmf import MassFunction

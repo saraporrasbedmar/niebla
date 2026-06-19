@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 # from scipy.interpolate import UnivariateSpline, RegularGridInterpolator
 
 from astropy.constants import c
+from astropy.cosmology import LambdaCDM
 
-
-from niebla import ebl_model, measurements
-# from src.niebla import ebl_model
-# import src.niebla.measurements as measurements
+# from niebla import ebl_model, measurements
+from src.niebla import ebl_model
+import src.niebla.measurements as measurements
 
 # from ebltable.ebl_from_model import EBL
 
@@ -74,29 +74,35 @@ config_data = read_config_file(input_file_dir + 'input_example.yml')
 ebl_class = ebl_model.EBL_model.input_yaml_data_into_class(
     config_data, log_prints=True)
 
+# ebl_class._cosmo = LambdaCDM(H0 = 50., Om0=0.5, Ode0=0.3)
+
 # FIGURE: METALLICITIES FOR DIFFERENT MODELS ---------------------------
 fig_met, ax_met = plt.subplots(figsize=(8, 8))
 plt.yscale('log')
-measurements.metallicity(ax=ax_met)
-measurements.metallicity(ax=ax_met, z_sun=0.014, color='b')
+measurements.metallicity(axis=ax_met)
+measurements.metallicity(z_sun=0.014, axis=ax_met, color='b')
 
 plt.xlabel('redshift z')
 plt.ylabel('Z')
 
 # FIGURE: COB FOR DIFFERENT MODELS -------------------------------------
 fig_cob, ax_cob = plt.subplots(figsize=(10, 8))
-# This command is necessary because we create the legend in a
-# subroutine, so pyplot does not recognize it straight away
-plt.tight_layout()
 
 waves_ebl = np.logspace(-1, 3, num=205)
 freq_array_ebl = c.value / (waves_ebl * 1e-6)
 
-measurements.ebl(
-    lambda_min_total=0.08, fig=fig_cob, ax=ax_cob,
-    colors_UL=['grey'], plot_UL=True, plot_IGL=True,
-    show_legend=True)
+measurements.ebl(lambda_min_total=0., lambda_max_total=6., plot=True,
+                 axis=ax_cob, show_legend=True)
 
+plt.xscale('log')
+plt.yscale('log')
+# plt.ylim(0.1, 120)
+
+fig_cob.savefig(input_file_dir + '/ebl_bare' + '.png',
+                bbox_inches='tight')
+fig_cob.savefig(input_file_dir + '/ebl_bare' + '.pdf',
+                bbox_inches='tight')
+plt.show()
 
 # Axion component calculation
 
@@ -131,9 +137,8 @@ legend22 = plt.legend(loc=3,# bbox_to_anchor=(0.5, 0.1),
 plt.figure()
 
 emiss_data = measurements.emissivity(
-    z_min=None, z_max=None,
-    lambda_min=0., lambda_max=3e3,
-    take_only_refs=None, plot=False)
+    z_min=None, z_max=None, lambda_min=0., lambda_max=3e3, plot=False)
+print(emiss_data)
 
 plt.scatter(x=emiss_data['lambda'], y=emiss_data['z'],
             c=np.log10(emiss_data['eje']),
@@ -180,10 +185,8 @@ for n_lambda, ll in enumerate([0.15, 0.17, 0.28,
                                1.22, 2.2, 3.6,
                                4.5, 5.8, 8.0]):
     ax = plt.subplot(4, 3, n_lambda + 1)
-    measurements.emissivity(
-        z_min=None, z_max=None,
-        lambda_min=ll - 0.01, lambda_max=ll + 0.01,
-        plot=True, ax=ax)
+    measurements.emissivity(z_min=None, z_max=None, lambda_min=ll - 0.01,
+                            lambda_max=ll + 0.01, plot=True, axis=ax)
 
     # if n_lambda != 8:
     plt.annotate(r'%r$\,\mu m$' % ll, xy=(5, 1e35), fontsize=28)
@@ -231,7 +234,7 @@ z_data = np.linspace(float(config_data['redshift_array']['z_min']),
                      float(config_data['redshift_array']['z_max']),
                      num=500)
 
-sfr_data = measurements.sfr(plot=True, ax=ax_sfr)
+sfr_data = measurements.sfr(plot=True, axis=ax_sfr)
 
 
 plt.yscale('log')
@@ -534,5 +537,6 @@ fig_dustabs.savefig(
 fig_dustabs.savefig(
     input_file_dir + '/dustabs' + '.pdf',
     bbox_inches='tight')
+
 
 plt.show()

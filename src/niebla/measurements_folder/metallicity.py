@@ -2,8 +2,9 @@ import numpy as np
 
 from astropy.table import Table
 
-def metallicity(z_sun=0.02, ax=None, color='k', marker='o',
-                markersize=30, alpha=0.8, zorder=100, label=None):
+def metallicity(
+        z_sun=0.02, axis=None, color='k', marker='o',
+        markersize=30, alpha=0.8, zorder=100, label=None):
     data_array = np.array(
         [[0.55, -0.16, 0.11, 0.14],
          [1.64, -0.4, 0.09, 0.09],
@@ -26,20 +27,20 @@ def metallicity(z_sun=0.02, ax=None, color='k', marker='o',
                        names=('z', 'metall',
                               'metall_err_low', 'metall_err_up'))
 
-    if ax is not None:
+    if axis is not None:
         if label is None:
             label = r'$Z_\odot = $%s' % z_sun
 
-        ax.errorbar(x=data_array['z'], y=data_array['metall'],
-                    yerr=[data_array['metall_err_low'],
+        axis.errorbar(x=data_array['z'], y=data_array['metall'],
+                      yerr=[data_array['metall_err_low'],
                           data_array['metall_err_up']],
-                    linestyle='', color=color,
-                    ms=0, zorder=zorder-1, alpha=alpha
-                    )
-        ax.scatter(x=data_array['z'], y=data_array['metall'],
-                   lw=0, color=color,
-                   s=markersize,
-                   marker=marker, zorder=zorder, alpha=alpha,
-                   label=label
-                   )
+                      linestyle='', color=color,
+                      ms=0, zorder=zorder-1, alpha=alpha
+                      )
+        axis.scatter(x=data_array['z'], y=data_array['metall'],
+                     lw=0, color=color,
+                     s=markersize,
+                     marker=marker, zorder=zorder, alpha=alpha,
+                     label=label
+                     )
     return data_array

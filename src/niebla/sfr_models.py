@@ -1,120 +1,139 @@
 import numpy as np
+import logging
+from src.niebla.safe_evaluation_strings import safe_formula
+
+logger = logging.getLogger(__name__)
 
 
-def _sfr_madau14(zz_array, params=None, verbose=True):
+def _sfr_madau14(zz_array, sfr_params=None, verbose=False):
     """
-    Eq. 15](https://www.annualreviews.org/content/journals/10.1146/annurev-astro-081811-125615#f9
-    :param zz_array:
-    :param params:
-    :param verbose:
-    :return:
-    """
-    if params is None:
-        params = [0.015, 2.7, 2.9, 5.6]
+    Stellar Formation Rate Density (SFRD) is the density of stars
+    that are born as a function of redshift.
+    Eq. 15 from
+    https://www.annualreviews.org/content/journals/10.1146/annurev-astro-081811-125615#f9
+
+    zz_array: nD array
+        Redshift values to input in the SFRD formula.
+    sfr_params: 1D array or list
+        Optional parameters that can enter the SFRD formula.
+    verbose: boolean
+        Print the values of the input parameters if the default are used.
+
+    :return: nD array
+        SFRD values with the same shape of the zz_array.
+        Units: M_Sun / yr / Mpc^3
+     """
+    if isinstance(zz_array, list):
+        zz_array = np.array(zz_array)
+    if sfr_params is None:
+        sfr_params = [0.015, 2.7, 2.9, 5.6]
         if verbose:
-            print('   -> SFR: default parameters chosen: ',
-                  params)
-    return (params[0] * (1 + zz_array) ** params[1]
-            / (1 + ((1 + zz_array) / params[2]) ** params[3]))
+            logger.info('   -> SFR: default parameters chosen: %s', sfr_params)
+    return (sfr_params[0] * (1 + zz_array) ** sfr_params[1]
+            / (1 + ((1 + zz_array) / sfr_params[2]) ** sfr_params[3]))
 
 
-def _sfr_finke22a(zz_array, params=None, verbose=True):
+def _sfr_finke22a(zz_array, sfr_params=None, verbose=False):
     """
+    Stellar Formation Rate Density (SFRD) is the density of stars
+    that are born as a function of redshift.
+    Eq. 15 from https://iopscience.iop.org/article/10.3847/1538-4357/ac9843
 
-    :param zz_array:
-    :param params:
-    :param verbose:
-    :return:
-    """
-    if params is None:
-        params = [-2.04, 2.81, 1.25, -1.25, -1.84, -4.40, 1., 2., 3., 4.]
+    zz_array: nD array
+        Redshift values to input in the SFRD formula.
+    sfr_params: 1D array or list
+        Optional parameters that can enter the SFRD formula.
+    verbose: boolean
+        Print the values of the input parameters if the default are used.
+
+    :return: nD array
+        SFRD values with the same shape of the zz_array.
+        Units: M_Sun / yr / Mpc^3
+     """
+    if isinstance(zz_array, list):
+        zz_array = np.array(zz_array)
+    if sfr_params is None:
+        sfr_params = [-2.04, 2.81, 1.25, -1.25, -1.84, -4.40, 1., 2., 3., 4.]
         if verbose:
-            print('   -> SFR: default parameters chosen: ',
-                  params)
-    return (10 ** params[0] * (
-            ((1 + zz_array) ** params[1] * (zz_array < params[-4]))
-            + ((1 + params[-4]) ** (params[1] - params[2]) * (1 + zz_array) **
-               params[2] * (zz_array >= params[-4]) * (zz_array < params[-3]))
-            + ((1 + params[-4]) ** (params[1] - params[2]) * (
-            1 + params[-3]) ** (params[2] - params[3]) * (1 + zz_array) **
-               params[3] * (zz_array >= params[-3]) * (zz_array < params[-2]))
-            + ((1 + params[-4]) ** (params[1] - params[2]) * (
-            1 + params[-3]) ** (params[2] - params[3]) * (
-                       1 + params[-2]) ** (params[3] - params[4]) * (
-                       1 + zz_array) ** params[4] * (
-                       zz_array >= params[-2]) * (zz_array < params[-1]))
-            + ((1 + params[-4]) ** (params[1] - params[2]) * (
-            1 + params[-3]) ** (params[2] - params[3]) * (
-                       1 + params[-2]) ** (params[3] - params[4]) * (
-                       1 + params[-1]) ** (params[4] - params[5]) * (
-                       1 + zz_array) ** params[5] * (
-                       zz_array >= params[-1]))))
+            logger.info('   -> SFR: default parameters chosen: %s', sfr_params)
+    return (10 ** sfr_params[0] * (
+            ((1 + zz_array) ** sfr_params[1] * (zz_array < sfr_params[-4]))
+            + ((1 + sfr_params[-4]) ** (sfr_params[1] - sfr_params[2]) * (1 + zz_array) **
+               sfr_params[2] * (zz_array >= sfr_params[-4]) * (zz_array < sfr_params[-3]))
+            + ((1 + sfr_params[-4]) ** (sfr_params[1] - sfr_params[2]) * (
+            1 + sfr_params[-3]) ** (sfr_params[2] - sfr_params[3]) * (1 + zz_array) **
+               sfr_params[3] * (zz_array >= sfr_params[-3]) * (zz_array < sfr_params[-2]))
+            + ((1 + sfr_params[-4]) ** (sfr_params[1] - sfr_params[2]) * (
+            1 + sfr_params[-3]) ** (sfr_params[2] - sfr_params[3]) * (
+                       1 + sfr_params[-2]) ** (sfr_params[3] - sfr_params[4]) * (
+                       1 + zz_array) ** sfr_params[4] * (
+                       zz_array >= sfr_params[-2]) * (zz_array < sfr_params[-1]))
+            + ((1 + sfr_params[-4]) ** (sfr_params[1] - sfr_params[2]) * (
+            1 + sfr_params[-3]) ** (sfr_params[2] - sfr_params[3]) * (
+                       1 + sfr_params[-2]) ** (sfr_params[3] - sfr_params[4]) * (
+                       1 + sfr_params[-1]) ** (sfr_params[4] - sfr_params[5]) * (
+                       1 + zz_array) ** sfr_params[5] * (
+                       zz_array >= sfr_params[-1]))))
 
 
-def _sfr_cuba(zz_array, params=None, verbose=True):
+def _sfr_cuba(zz_array, sfr_params=None, verbose=False):
     """
+    Stellar Formation Rate Density (SFRD) is the density of stars
+    that are born as a function of redshift.
     Eq. 53 from https://iopscience.iop.org/article/10.1088/0004-637X/746/2/125
-    :param zz_array:
-    :param params:
-    :param verbose:
-    :return:
+
+    zz_array: nD array
+        Redshift values to input in the SFRD formula.
+    sfr_params: 1D array or list
+        Optional parameters that can enter the SFRD formula.
+    verbose: boolean
+        Print the values of the input parameters if the default are used.
+
+    :return: nD array
+        SFRD values with the same shape of the zz_array.
+        Units: M_Sun / yr / Mpc^3
+     """
+
+    if isinstance(zz_array, list):
+        zz_array = np.array(zz_array)
+    if sfr_params is None:
+        sfr_params = [6.9e-3, 0.14, 2.2, 1.5, 2.7, 4.1]
+        if verbose:
+            logger.info('   -> SFR: default parameters chosen: %s', sfr_params)
+    return ((sfr_params[0] + sfr_params[1] * (zz_array / sfr_params[2]) ** sfr_params[3])
+            / (1. + (zz_array / sfr_params[4]) ** sfr_params[5]))
+
+
+def _sfr_constant(zz_array, sfr_params=None, verbose=False):
     """
-    if params is None:
-        params = [6.9e-3, 0.14, 2.2, 1.5, 2.7, 4.1]
+    Stellar Formation Rate Density (SFRD) is the density of stars
+    that are born as a function of redshift.
+    Constant SFRD.
+
+    zz_array: nD array
+        Redshift values to input in the formula.
+    sfr_params: 1D array or list
+        Optional parameters that can enter the sfr formula.
+    verbose: boolean
+       Print the values of the input parameters if the default are used.
+
+    :return: nD array
+        SFRD values with the same shape of the zz_array.
+        Units: M_Sun / yr / Mpc^3
+    """
+    if isinstance(zz_array, list):
+        zz_array = np.array(zz_array)
+    if isinstance(sfr_params, list) or isinstance(sfr_params, np.ndarray):
+        if len(sfr_params) != 1:
+            raise ValueError(
+                "SFRD only accepts exactly "
+                "one parameter in sfr_params: %s", sfr_params)
+        sfr_params = float(sfr_params[0])
+    if sfr_params is None:
+        sfr_params = 1.
         if verbose:
-            print('   -> SFR: default parameters chosen: ',
-                  params)
-    return ((params[0] + params[1] * (zz_array / params[2]) ** params[3])
-            / (1. + (zz_array / params[4]) ** params[5]))
-
-
-def _sfr_constant(zz_array, params=None, verbose=True):
-    if params is None:
-        params = [1.]
-        if verbose:
-            print('   -> SFR: default parameters chosen: ',
-                  params)
-    return np.ones_like(zz_array) * params
-
-
-def _sfr_custom(zz_array, sfr_model, params=None, verbose=True):
-
-    if type(sfr_model) == str:
-        try:
-            return eval(sfr_model, {'zz': zz_array, 'ci': params})
-        except NameError:
-            raise NameError(
-                'Unrecognized type of metallicity dependency.' + '\n'
-                + 'Implemented models: ' + '\n'
-                + str([*model_list]) + '\n'
-                + 'If the string is a expression to evaluate,' + '\n'
-                + 'there is something wrong in it, check it.' + '\n'
-                + 'Independent variable must be called \'zz\' ' + '\n'
-                + 'and parameters be an array or list called \'ci\'.' + '\n'
-                + 'Inputs given:' + '\n'
-                + '\'metall_model\': ' + str(sfr_model) + '\n'
-                + '\'ci\': ' + str(params)
-            )
-
-    elif callable(sfr_model):
-        if params is None:
-            return sfr_model(zz_array)
-        else:
-            return sfr_model(zz_array, params)
-
-    else:
-        raise ValueError(
-            'Unrecognized type of metallicity dependency.' + '\n'
-            + 'Implemented models: ' + '\n'
-            + str([*model_list]) + '\n'
-            + 'If the string is a expression to evaluate,' + '\n'
-            + 'there is something wrong in it, check it.' + '\n'
-            + 'Independent variable must be called \'zz\' ' + '\n'
-            + 'and parameters be an array or list called \'ci\'.' + '\n'
-            + 'Inputs given:' + '\n'
-            + '\'metall_model\': ' + str(sfr_model) + '\n'
-            + '\'ci\': ' + str(params)
-        )
+            logger.info('   -> SFR: default parameters chosen: %s', sfr_params)
+    return np.ones_like(zz_array) * sfr_params
 
 
 # ---------------------------------------------------------------------
@@ -127,26 +146,55 @@ model_list = {
 }
 
 
-def sfr_model(zz_array, sfr_model, sfr_params=None, verbose=True):
+def sfr_model(zz_array, sfr_model, sfr_params=None, verbose=False):
     """
-    Stellar Formation Rate (sfr) is the density of stars that are born
-    as a function of redshift.
-    Units expected: TODO
+    Stellar Formation Rate Density (SFRD) is the density of stars
+    that are born as a function of redshift.
 
-    zz_array: nD array
-        Redshift values to input in the formula.
-    sfr_model: string or callable
-        Formula (analytical or numerical) of the sfr.
-    params: 1D array or list
-        Optional parameters that can enter the sfr formula.
+     zz_array: nD array
+         Redshift values to input in the formula.
+     sfr_model: string or callable
+         Formula (analytical or numerical) of the SFRD.
+     params: 1D array or list
+         Optional parameters that can enter the sfr formula.
+    verbose: boolean
+        Print the values of the input parameters if the default are used.
 
-    :return: nD array
-        sfr values with the same shape of the zz_array.
-    """
+     :return: nD array
+         SFRD values with the same shape of the zz_array.
+         Units: M_Sun / yr / Mpc^3
+     """
+
+    if isinstance(zz_array, list):
+        zz_array = np.array(zz_array)
+
     if sfr_model in model_list.keys():
         return model_list[sfr_model](
-            zz_array=zz_array, params=sfr_params, verbose=verbose)
-    else:
-        return _sfr_custom(
-            zz_array=zz_array, sfr_model=sfr_model,
-            params=sfr_params, verbose=verbose)
+            zz_array=zz_array, sfr_params=sfr_params, verbose=verbose)
+
+    if isinstance(sfr_model, str):
+        try:
+            return safe_formula(sfr_model, xx=zz_array, params=sfr_params)
+
+        except Exception as e:
+            raise ValueError(
+                f'Error evaluating string formula ' + sfr_model
+                + f' with z_array {zz_array}'
+                  f'and sfr_params {sfr_params}: {e}') from e
+
+    elif callable(sfr_model):
+        if sfr_params is not None:
+            if isinstance(sfr_params, dict):
+                return sfr_model(zz_array, **sfr_params)
+            return sfr_model(zz_array, sfr_params)
+        else:
+            return sfr_model(zz_array)
+    raise ValueError(f"Unrecognized sfr_model type: {type(sfr_model)}")
+
+
+if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )

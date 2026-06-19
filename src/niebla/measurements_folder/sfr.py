@@ -1,23 +1,29 @@
-import os
 import numpy as np
+from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-
 from astropy.table import Table, vstack
 
 
-def sfr(plot=True, ax=None,
-        markers=['*', '<', '>', 'H', '^', 'd'], colors=None,
+def sfr(plot=True, axis=None,
+        markers=None, colors=None,
         markersize=12, zorder=100, alpha=0.8,
         title_legend='Measurements', loc_legend=1,
         fontsize_legend=16,
         title_fontsize_legend=18, framealpha_legend=0.8
         ):
-    data_path = os.path.join(
-        os.path.split(__file__)[0], '../data/measurements/sfr/')
+    data_path = Path(__file__).resolve().parent.parent/"data"/"measurements"/"sfr"
+
+    if markers is None:
+        markers = ['*', '<', '>', 'H', '^', 'd']
+
+    if plot is True and axis is None:
+        raise AttributeError(
+            f"sfr data points plotting: "
+            f"plot boolean set to True but axis is None")
 
     md_data = np.loadtxt(
-        data_path + 'MadauDickinson_uvdata.txt', usecols=range(1, 7))
+        data_path / 'MadauDickinson_uvdata.txt', usecols=range(1, 7))
     z_lo = md_data[:, 0]
     z_up = md_data[:, 1]
     z_uv_dat = 0.5 * (z_up + z_lo)
@@ -35,7 +41,7 @@ def sfr(plot=True, ax=None,
         col=r'Madau $&$ Dickinson UV data', name='Reference')
 
     md_data = np.loadtxt(
-        data_path + 'MadauDickinson_irdata.txt', usecols=range(1, 6))
+        data_path / 'MadauDickinson_irdata.txt', usecols=range(1, 6))
 
     z_lo = md_data[:, 0]
     z_up = md_data[:, 1]
@@ -53,10 +59,10 @@ def sfr(plot=True, ax=None,
     sfr2_table.add_column(
         col=r'Madau $&$ Dickinson IR data', name='Reference')
 
-    dr_data = np.loadtxt(data_path + 'Driver_SFR.txt')
+    dr_data = np.loadtxt(data_path / 'Driver_SFR.txt')
     z_lo = dr_data[:, 1]
     z_up = dr_data[:, 2]
-    z_dr = 0.5 * (z_up + z_lo)
+    # z_dr = 0.5 * (z_up + z_lo)
     z_dr = 10 ** (0.5 * (np.log10(z_up) + np.log10(z_lo)))
     z_dr_lo = np.absolute(z_dr - z_lo)
     z_dr_up = np.absolute(z_dr - z_up)
@@ -72,7 +78,7 @@ def sfr(plot=True, ax=None,
     sfr3_table.add_column(
         col=r'Driver et al. 2018', name='Reference')
 
-    bo_data = np.loadtxt(data_path + 'Bourne2017.txt')
+    bo_data = np.loadtxt(data_path / 'Bourne2017.txt')
     z_bo_lo = bo_data[:, 2]
     z_bo_up = bo_data[:, 3]
     z_bo = bo_data[:, 0]
@@ -100,11 +106,11 @@ def sfr(plot=True, ax=None,
     sfr5_table.add_column(
         col='Bouwens et al. 2015', name='Reference')
 
-    dict_srd = vstack([
+    sfr_table = vstack([
         sfr1_table, sfr2_table, sfr3_table, sfr4_table, sfr5_table])
 
     if plot:
-        refs = np.unique(dict_srd['Reference'])
+        refs = np.unique(sfr_table['Reference'])
 
         handles = []
         labels = []
@@ -114,11 +120,11 @@ def sfr(plot=True, ax=None,
             colors = prop_cycle.by_key()['color']
 
         for nref, ref in enumerate(refs):
-            dict_values = dict_srd[dict_srd['Reference'] == ref]
+            dict_values = sfr_table[sfr_table['Reference'] == ref]
 
             color_i = colors[nref % len(colors)]
 
-            ax.errorbar(
+            axis.errorbar(
                 x=dict_values['z_value'],
                 xerr=(dict_values['zerr_low'], dict_values['zerr_up']),
                 y=dict_values['sfr_value'],
@@ -140,6 +146,6 @@ def sfr(plot=True, ax=None,
             fontsize=fontsize_legend,
             title_fontsize=title_fontsize_legend,
             framealpha=framealpha_legend)
-        ax.add_artist(legend1)
+        axis.add_artist(legend1)
 
-    return dict_srd
+    return sfr_table
